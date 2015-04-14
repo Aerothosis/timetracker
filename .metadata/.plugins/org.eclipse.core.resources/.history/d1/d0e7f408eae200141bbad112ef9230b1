@@ -1,0 +1,39 @@
+/*
+This is the main login window. All users will have a user id associated with their account. Their user id
+will differentiate between what class/weeks/assignments are associated with them. Multiple classes/weeks can
+be associated with multiple users, but only 1 user can be assigned to an assigment.
+ */
+
+
+
+import java.awt.event.*;
+import javax.swing.*;
+
+
+public class LoginWindow extends JFrame implements ActionListener
+{
+	static JFrame frame = null;
+	
+	LoginWindow()
+	{
+		
+	}
+	
+	
+	public static void main(String[] args) 
+	{
+		CreateGUI();
+	}
+	
+	public static void CreateGUI()
+	{
+		frame = new LoginWindow();
+		frame.setVisible(true);
+	}
+
+	public void actionPerformed(ActionEvent ae) 
+	{
+		
+	}
+
+}

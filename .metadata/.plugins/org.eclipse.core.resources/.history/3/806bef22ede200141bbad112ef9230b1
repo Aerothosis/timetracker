@@ -1,0 +1,12 @@
+/*
+This is the database connection file. Edit this file to change database connection ONLY.
+ */
+
+public class MysqlConn 
+{
+	public static String conn()
+	{
+		String connection = "jdbc:mysql://localhost/mfurtado_timetracker?";
+		return connection;
+	}
+}

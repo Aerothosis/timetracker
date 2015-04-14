@@ -1,0 +1,38 @@
+/*
+This is the database connection file. Edit this file to change database connection ONLY.
+ */
+
+
+//import java.sql.*;
+
+public class MysqlConn 
+{
+	public static String conn()
+	{
+		/*Connection conn = null;
+		Statement stmt = null;
+		PreparedStatement pst = null;
+		
+		try 
+		{
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		} */
+		String connection = "jdbc:mysql://db.mfurtado.com/mfurtado_global?";
+		return connection;
+	}
+}
+
+
+/*
+Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = DriverManager.getConnection("jdbc:mysql://db.mfurtado.com/mfurtado_global?" + "user=aerothosis&password=halorvb1");
+			
+			pst = conn.prepareStatement("Select * from members where login = ? and password = ?");
+			pst.setString(1, usr);
+			pst.setString(2, passSHA);
+			ResultSet rs = pst.executeQuery();
+*/

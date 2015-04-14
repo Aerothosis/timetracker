@@ -1,0 +1,28 @@
+
+
+
+
+
+import javax.swing.*;
+
+
+public class LoginWindow extends JFrame 
+{
+	static JFrame frame = null;
+	
+	LoginWindow()
+	{}
+	
+	
+	public static void main(String[] args) 
+	{
+		CreateGUI();
+	}
+	
+	public static void CreateGUI()
+	{
+		frame = new LoginWindow();
+		frame.setVisible(true);
+	}
+
+}
