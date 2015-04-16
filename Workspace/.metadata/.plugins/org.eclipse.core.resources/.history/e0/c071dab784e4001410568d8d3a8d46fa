@@ -1,0 +1,26 @@
+
+
+
+import javax.swing.*;
+
+
+public class AdminWindow extends JFrame 
+{
+	
+	static JFrame frame = null;
+	
+	AdminWindow()
+	{}
+
+	public static void main(String[] args) 
+	{
+		CreateGUI();
+	}
+	
+	public static void CreateGUI()
+	{
+		frame = new AdminWindow();
+		frame.setVisible(true);
+	}
+
+}

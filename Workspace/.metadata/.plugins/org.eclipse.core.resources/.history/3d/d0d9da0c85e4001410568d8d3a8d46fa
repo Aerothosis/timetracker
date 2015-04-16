@@ -47,8 +47,8 @@ public class NewUserWindow extends JFrame implements ActionListener
 	{
 		this.setSize(500, 400);
 		this.setLocation(400, 200);
-		//this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setTitle("New User Panel");
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setTitle("Admin Panel");
 		this.setLayout(new BorderLayout());
 		
 		content.setLayout(null);
@@ -135,13 +135,13 @@ public class NewUserWindow extends JFrame implements ActionListener
 	
 	public static void main(String[] args) 
 	{
-		CreateGUI();//"", "");
+		CreateGUI("", "");
 	}
 	
-	public static void CreateGUI()//String userIn, String userUICIn)
+	public static void CreateGUI(String userIn, String userUICIn)
 	{
-		//userAdmin = userIn;
-		//userUICAdmin = userUICIn;
+		userAdmin = userIn;
+		userUICAdmin = userUICIn;
 		frame = new NewUserWindow();
 		frame.setVisible(true);
 	}

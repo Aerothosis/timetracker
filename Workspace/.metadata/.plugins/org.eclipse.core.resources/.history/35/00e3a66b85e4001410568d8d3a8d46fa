@@ -135,13 +135,13 @@ public class NewUserWindow extends JFrame implements ActionListener
 	
 	public static void main(String[] args) 
 	{
-		CreateGUI();//"", "");
+		CreateGUI("", "");
 	}
 	
-	public static void CreateGUI()//String userIn, String userUICIn)
+	public static void CreateGUI(String userIn, String userUICIn)
 	{
-		//userAdmin = userIn;
-		//userUICAdmin = userUICIn;
+		userAdmin = userIn;
+		userUICAdmin = userUICIn;
 		frame = new NewUserWindow();
 		frame.setVisible(true);
 	}

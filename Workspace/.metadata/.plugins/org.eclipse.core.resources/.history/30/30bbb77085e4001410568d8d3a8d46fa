@@ -1,0 +1,39 @@
+
+
+
+import javax.swing.*;
+import java.awt.event.*;
+
+
+public class AdminWindow extends JFrame implements ActionListener
+{
+	
+	static JFrame frame = null;
+	
+	AdminWindow()
+	{
+		this.setSize(400, 400);
+		this.setLocation(300, 200);
+		this.setTitle("Admin Window");
+		this.setLayout(null);
+		
+		
+	}
+
+	public static void main(String[] args) 
+	{
+		CreateGUI();
+	}
+	
+	public static void CreateGUI()
+	{
+		frame = new AdminWindow();
+		frame.setVisible(true);
+	}
+
+	public void actionPerformed(ActionEvent ae) 
+	{
+		
+	}
+
+}

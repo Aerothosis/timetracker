@@ -28,7 +28,6 @@ public class NewUserWindow extends JFrame implements ActionListener
 	JTextField regnumIn = new JTextField("");
 	JLabel usrVersion = new JLabel("Version");
 	JTextField usrVersionIn = new JTextField("");
-	JLabel usrVerHelp = new JLabel("1-Student,2-Proff");
 	JButton random = new JButton("Rndm");
 	JButton addUser = new JButton("Add User");
 	JButton newForm = new JButton("New Form Window");
@@ -47,8 +46,8 @@ public class NewUserWindow extends JFrame implements ActionListener
 	{
 		this.setSize(500, 400);
 		this.setLocation(400, 200);
-		//this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setTitle("New User Panel");
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setTitle("Admin Panel");
 		this.setLayout(new BorderLayout());
 		
 		content.setLayout(null);
@@ -61,17 +60,13 @@ public class NewUserWindow extends JFrame implements ActionListener
 		userIn.setLocation(120, 10);
 		content.add(userIn);
 		
-		usrVersion.setSize(50, 30);
+		usrVersion.setSize(100, 30);
 		usrVersion.setLocation(230, 10);
 		content.add(usrVersion);
 		
 		usrVersionIn.setSize(50, 30);
-		usrVersionIn.setLocation(280, 10);
+		usrVersionIn.setLocation(330, 10);
 		content.add(usrVersionIn);
-		
-		usrVerHelp.setSize(100, 30);
-		usrVerHelp.setLocation(340, 10);
-		content.add(usrVerHelp);
 		
 		passL.setSize(100, 30);
 		passL.setLocation(10, 50);
@@ -135,13 +130,13 @@ public class NewUserWindow extends JFrame implements ActionListener
 	
 	public static void main(String[] args) 
 	{
-		CreateGUI();//"", "");
+		CreateGUI("", "");
 	}
 	
-	public static void CreateGUI()//String userIn, String userUICIn)
+	public static void CreateGUI(String userIn, String userUICIn)
 	{
-		//userAdmin = userIn;
-		//userUICAdmin = userUICIn;
+		userAdmin = userIn;
+		userUICAdmin = userUICIn;
 		frame = new NewUserWindow();
 		frame.setVisible(true);
 	}
@@ -184,10 +179,9 @@ public class NewUserWindow extends JFrame implements ActionListener
 				String conIn = regnumIn.getText();
 				String converted = HashBash(conIn);
 				String userIdIn = UserIDRandom(6);
-				String passCon = HashBash(passIn.getText());
-				String values = "'" + userIdIn + "','" + userIn.getText() + "','" + passCon + "','" + userNameIn.getText() + 
-						"','" + userUICIn.getText() + "','" + userLvlIn.getText() + "','" + usrVersionIn.getText() + "','" + converted + "'";
-				PreparedStatement stmt = conn.prepareStatement("insert into user_login (user_id,username,pass,name_first,name_last,account_status,version,regnum) values (" + values + ")");
+				String values = "'" + userIdIn + "','" + userIn.getText() + "','" + passIn.getText() + "','" + userNameIn.getText() + 
+						"','" + userUICIn.getText() + "','" + userLvlIn.getText() + "','" + converted + "'";
+				PreparedStatement stmt = conn.prepareStatement("insert into user_login (user_id,username,pass,name_first,name_last,account_status,regnum) values (" + values + ")");
 				stmt.execute();
 				PreparedStatement stmt2 = conn.prepareStatement("insert into reg_users (regnum,login) values ('" + converted + "','" + userIn.getText() + "')");
 				stmt2.execute();

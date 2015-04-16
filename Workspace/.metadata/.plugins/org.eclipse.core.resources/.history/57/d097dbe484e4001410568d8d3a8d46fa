@@ -139,8 +139,8 @@ public class LoginWindow extends JFrame implements ActionListener
 			
 			pst = conn.prepareStatement("Select * from user_login where username = ? and pass = ?");
 			pst.setString(1, usr);
-			//pst.setString(2, password);
-			pst.setString(2, passSHA);
+			pst.setString(2, password);
+			//pst.setString(2, passSHA);
 			ResultSet rs = pst.executeQuery();
 
 			
@@ -167,7 +167,7 @@ public class LoginWindow extends JFrame implements ActionListener
 							if(login == 0)
 							{
 								JOptionPane.showMessageDialog(null, "Welcome " + username + "! You are \nlogged in as an admin.");
-								AdminWindow.CreateGUI();
+								//AdminWindow.CreateGUI(username, userUIC);
 							}
 							else
 							{
