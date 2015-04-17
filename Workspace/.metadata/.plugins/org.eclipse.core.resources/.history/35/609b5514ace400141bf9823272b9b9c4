@@ -1,0 +1,58 @@
+import javax.swing.*;
+import java.awt.event.*;
+
+
+public class AddNewItems extends JFrame implements ActionListener
+{
+	static JFrame newClient = null;
+	static JPanel newClientP = null;
+	static JFrame newProj = null;
+	static JPanel newProjP = null;
+	
+	public static void main(String[] args) 
+	{
+		
+	}
+
+	public static JFrame NewClient()
+	{
+		JLabel clientL = new JLabel("Client's Name") ;
+		JTextField clientIn = new JTextField("");
+		JButton addClient = new JButton("Add");
+		
+		newClient = new JFrame();
+		newClient.setSize(300, 200);
+		newClient.setLocation(600, 300);
+		newClient.setTitle("Add New Client");
+		newClient.setLayout(null);
+		
+		clientL.setSize(100, 30);
+		clientL.setLocation(10, 10);
+		newClient.add(clientL);
+		
+		clientIn.setSize(100, 30);
+		clientIn.setLocation(10, 45);
+		newClient.add(clientIn);
+		
+		addClient.setSize(100, 30);
+		addClient.setLocation(10, 80);
+		addClient.addActionListener(this);
+		
+		return newClient;
+	}
+	
+	public static JFrame NewProj()
+	{
+		newProj = new JFrame();
+		newProj.setSize(300, 200);
+		newProj.setLocation(600, 300);
+		newProj.setTitle("Add New Project");
+		
+		return newProj;
+	}
+
+	public void actionPerformed(ActionEvent ae) 
+	{
+		
+	}
+}

@@ -1,0 +1,245 @@
+
+import javax.swing.*;
+
+import com.mysql.jdbc.exceptions.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+import java.security.*;
+import java.math.*;
+import java.util.*;
+
+public class NewUserWindow extends JFrame implements ActionListener
+{
+	JPanel content = new JPanel();
+	JScrollPane scroll = null;
+	
+	JLabel userL = new JLabel("Login");
+	JTextField userIn = new JTextField();
+	JLabel passL = new JLabel("Password");
+	JTextField passIn = new JTextField();
+	JLabel userNameL = new JLabel("First Name");
+	JTextField userNameIn = new JTextField();
+	JLabel userUICL = new JLabel("Last Name");
+	JTextField userUICIn = new JTextField();
+	JLabel userLvlL = new JLabel("User's Acct LVL");
+	JTextField userLvlIn = new JTextField();
+	JLabel regnumL = new JLabel("RegNum");
+	JTextField regnumIn = new JTextField("");
+	JLabel usrVersion = new JLabel("Version");
+	JTextField usrVersionIn = new JTextField("");
+	JLabel usrVerHelp = new JLabel("1-Student,2-Proff");
+	JButton random = new JButton("Rndm");
+	JButton addUser = new JButton("Add User");
+	JButton newForm = new JButton("New Form Window");
+	
+	static JFrame frame = null;
+	
+	static String userAdmin = "";
+	static String userUICAdmin = "";
+	static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	static final String CD = "0123456789";
+	static Random rnd = new Random();
+	static String connStr = MysqlConn.conn(); 
+	static String loginStr = MysqlConn.loginAero();
+	
+	NewUserWindow()
+	{
+		this.setSize(500, 400);
+		this.setLocation(400, 200);
+		this.setTitle("New User Panel");
+		this.setLayout(new BorderLayout());
+		
+		content.setLayout(null);
+		content.setPreferredSize(new Dimension(400, 400));
+		userL.setSize(100, 30);
+		userL.setLocation(10, 10);
+		content.add(userL);
+		
+		userIn.setSize(100, 30);
+		userIn.setLocation(120, 10);
+		content.add(userIn);
+		
+		usrVersion.setSize(50, 30);
+		usrVersion.setLocation(230, 10);
+		content.add(usrVersion);
+		
+		usrVersionIn.setSize(50, 30);
+		usrVersionIn.setLocation(280, 10);
+		content.add(usrVersionIn);
+		
+		usrVerHelp.setSize(100, 30);
+		usrVerHelp.setLocation(340, 10);
+		content.add(usrVerHelp);
+		
+		passL.setSize(100, 30);
+		passL.setLocation(10, 50);
+		content.add(passL);
+		
+		passIn.setSize(100, 30);
+		passIn.setLocation(120, 50);
+		content.add(passIn);
+		
+		userNameL.setSize(100, 30);
+		userNameL.setLocation(10, 90);
+		content.add(userNameL);
+		
+		userNameIn.setSize(100, 30);
+		userNameIn.setLocation(120, 90);
+		content.add(userNameIn);
+		
+		userUICL.setSize(100, 30);
+		userUICL.setLocation(10, 130);
+		content.add(userUICL);
+		
+		userUICIn.setSize(100, 30);
+		userUICIn.setLocation(120, 130);
+		content.add(userUICIn);
+		
+		userLvlL.setSize(105, 30);
+		userLvlL.setLocation(10, 170);
+		content.add(userLvlL);
+		
+		userLvlIn.setSize(100, 30);
+		userLvlIn.setLocation(120, 170);
+		content.add(userLvlIn);
+		
+		regnumL.setSize(100, 30);
+		regnumL.setLocation(10, 210);
+		content.add(regnumL);
+		
+		regnumIn.setSize(100, 30);
+		regnumIn.setLocation(120, 210);
+		content.add(regnumIn);
+		
+		random.setSize(70, 30);
+		random.setLocation(225, 210);
+		random.addActionListener(this);
+		content.add(random);
+
+		addUser.setSize(100, 30);
+		addUser.setLocation(10, 250);
+		addUser.addActionListener(this);
+		content.add(addUser);
+		
+		newForm.setSize(150, 30);
+		newForm.setLocation(10, 290);
+		newForm.addActionListener(this);
+		content.add(newForm);
+		
+		scroll = new JScrollPane(content);
+		//scroll.setPreferredSize(new Dimension(400, 400));
+		this.add(scroll, BorderLayout.CENTER);
+	}
+	
+	public static void main(String[] args) 
+	{
+		CreateGUI();//"", "");
+	}
+	
+	public static void CreateGUI()//String userIn, String userUICIn)
+	{
+		//userAdmin = userIn;
+		//userUICAdmin = userUICIn;
+		frame = new NewUserWindow();
+		frame.setVisible(true);
+	}
+
+	public void actionPerformed(ActionEvent ae) 
+	{
+		if(ae.getSource() == addUser)
+		{
+			InsertUser();
+			//JOptionPane.showMessageDialog(null, "Works");
+		}
+		else if(ae.getSource() == newForm)
+		{
+			frame.setVisible(false);
+			//NewForm.CreateGUI(userAdmin, userUICAdmin);
+		}
+		else if(ae.getSource() == random)
+		{
+			String regnuminput = RandomGen(16);
+			regnumIn.setText(regnuminput);
+		}
+	}
+	
+	public void InsertUser()
+	{
+		try
+		{
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			Connection conn = DriverManager.getConnection(connStr + loginStr);
+			
+			PreparedStatement pst = conn.prepareStatement("Select * from user_login where username = ?");
+			pst.setString(1, userIn.getText());
+			ResultSet rs = pst.executeQuery();
+			if(rs.next())
+			{
+				JOptionPane.showMessageDialog(null, "User with that login already exists." + '\n' + "Please try again.");
+			}
+			else
+			{
+				String conIn = regnumIn.getText();
+				String converted = HashBash(conIn);
+				String userIdIn = UserIDRandom(6);
+				String passCon = HashBash(passIn.getText());
+				String values = "'" + userIdIn + "','" + userIn.getText() + "','" + passCon + "','" + userNameIn.getText() + 
+						"','" + userUICIn.getText() + "','" + userLvlIn.getText() + "','" + usrVersionIn.getText() + "','" + converted + "'";
+				PreparedStatement stmt = conn.prepareStatement("insert into user_login (user_id,username,pass,name_first,name_last,account_status,version,regnum) values (" + values + ")");
+				stmt.execute();
+				PreparedStatement stmt2 = conn.prepareStatement("insert into reg_users (regnum,login) values ('" + converted + "','" + userIn.getText() + "')");
+				stmt2.execute();
+				JOptionPane.showMessageDialog(null, values);
+			}
+		}
+		catch(MySQLIntegrityConstraintViolationException m)
+		{
+			JOptionPane.showMessageDialog(null, "Duplicate Regnum or Login info. Please try again.");
+		}
+		catch(Exception e)
+		{
+			JOptionPane.showMessageDialog(null, e);
+		}
+	}
+	
+	public String HashBash(String convert)
+	{
+		try
+		{
+			String plaintext = convert;
+			MessageDigest s = MessageDigest.getInstance("SHA1");
+			s.reset();
+			s.update(plaintext.getBytes());
+			byte[] digest = s.digest();
+			BigInteger bigInt = new BigInteger(1,digest);
+			String hashtext = bigInt.toString(16);
+			// Now we need to zero pad it if you actually want the full 32 chars.
+			while(hashtext.length() < 32 ){
+			  hashtext = "0"+hashtext;
+			}
+			return hashtext;
+		}
+		catch(Exception e)
+		{
+			JOptionPane.showMessageDialog(null, e);
+		}
+		return null;
+	}
+
+	public String RandomGen(int len)
+	{
+	   StringBuilder sb = new StringBuilder( len );
+	   for( int i = 0; i < len; i++ ) 
+	      sb.append( AB.charAt( rnd.nextInt(AB.length()) ) );
+	   return sb.toString();
+	}
+	
+	public String UserIDRandom(int len)
+	{
+		StringBuilder sb = new StringBuilder( len );
+		   for( int i = 0; i < len; i++ ) 
+		      sb.append( CD.charAt( rnd.nextInt(CD.length()) ) );
+		   return sb.toString();
+	}
+}

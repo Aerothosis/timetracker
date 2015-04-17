@@ -1,0 +1,14 @@
+import javax.swing.*;
+
+
+public class AddNewItems extends JFrame 
+{
+	static JPanel newClient = null;
+	static JPanel newProj = null;
+	
+	public static void main(String[] args) 
+	{
+		
+	}
+
+}

@@ -8,9 +8,9 @@ be associated with multiple users, but only 1 user can be assigned to an assigme
 import javax.swing.*;
 
 import java.awt.event.*;
-import java.awt.*;
-import java.math.*;
-import java.security.*;
+//import java.awt.*;
+//import java.math.*;
+//import java.security.*;
 import java.sql.*;
 
 public class LoginWindow extends JFrame implements ActionListener
@@ -126,10 +126,11 @@ public class LoginWindow extends JFrame implements ActionListener
 		{
 			password += pass[count];
 		}
-		String passSHA = HashBash(password);
+		//String passSHA = HashBash(password);
+		String passSHA = CmnCode.HashBash(password);
 		String username = "";
-		String userUIC = "";
-		String sql = "SELECT * FROM members where username = ? AND password = ?";
+		//String userUIC = "";
+		//String sql = "SELECT * FROM members where username = ? AND password = ?";
 		
 		try
 		{
@@ -147,6 +148,7 @@ public class LoginWindow extends JFrame implements ActionListener
 			if(rs.next())
 			{
 				String adminLVL = rs.getString("account_status");
+				String userIDNum = rs.getString("user_id");
 				int admin = Integer.parseInt(adminLVL);
 				username = rs.getString("name_first") + " " + rs.getString("name_last");
 				String regnum = rs.getString("regnum");
@@ -167,7 +169,7 @@ public class LoginWindow extends JFrame implements ActionListener
 							if(login == 0)
 							{
 								JOptionPane.showMessageDialog(null, "Welcome " + username + "! You are \nlogged in as an admin.");
-								AdminWindow.CreateGUI();
+								AdminWindow.CreateGUI(userIDNum);
 							}
 							else
 							{
@@ -180,6 +182,7 @@ public class LoginWindow extends JFrame implements ActionListener
 							if(login == 0)
 							{
 								JOptionPane.showMessageDialog(null, "Welcome!"/*"Welcome " + username + "!"*/);
+								MainWindow.CreateGUI(userIDNum);
 								//NewForm.CreateGUI(username, userUIC);
 							}
 							else
@@ -235,7 +238,7 @@ public class LoginWindow extends JFrame implements ActionListener
 		return cleanreg;
 	}
 	
-	public static String HashBash(String convert)
+	/*public static String HashBash(String convert)
 	{
 		try
 		{
@@ -257,5 +260,5 @@ public class LoginWindow extends JFrame implements ActionListener
 			JOptionPane.showMessageDialog(null, e);
 		}
 		return null;
-	}
+	}*/
 }

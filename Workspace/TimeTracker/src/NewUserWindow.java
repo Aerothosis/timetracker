@@ -5,9 +5,9 @@ import com.mysql.jdbc.exceptions.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
-import java.security.*;
-import java.math.*;
-import java.util.*;
+//import java.security.*;
+//import java.math.*;
+//import java.util.*;
 
 public class NewUserWindow extends JFrame implements ActionListener
 {
@@ -37,17 +37,17 @@ public class NewUserWindow extends JFrame implements ActionListener
 	
 	static String userAdmin = "";
 	static String userUICAdmin = "";
-	static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-	static final String CD = "0123456789";
-	static Random rnd = new Random();
 	static String connStr = MysqlConn.conn(); 
 	static String loginStr = MysqlConn.loginAero();
+	
+	//static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	//static final String CD = "0123456789";
+	//static Random rnd = new Random();
 	
 	NewUserWindow()
 	{
 		this.setSize(500, 400);
 		this.setLocation(400, 200);
-		//this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setTitle("New User Panel");
 		this.setLayout(new BorderLayout());
 		
@@ -135,13 +135,11 @@ public class NewUserWindow extends JFrame implements ActionListener
 	
 	public static void main(String[] args) 
 	{
-		CreateGUI();//"", "");
+		CreateGUI();
 	}
 	
-	public static void CreateGUI()//String userIn, String userUICIn)
+	public static void CreateGUI()
 	{
-		//userAdmin = userIn;
-		//userUICAdmin = userUICIn;
 		frame = new NewUserWindow();
 		frame.setVisible(true);
 	}
@@ -151,7 +149,6 @@ public class NewUserWindow extends JFrame implements ActionListener
 		if(ae.getSource() == addUser)
 		{
 			InsertUser();
-			//JOptionPane.showMessageDialog(null, "Works");
 		}
 		else if(ae.getSource() == newForm)
 		{
@@ -160,7 +157,8 @@ public class NewUserWindow extends JFrame implements ActionListener
 		}
 		else if(ae.getSource() == random)
 		{
-			String regnuminput = RandomGen(16);
+			//String regnuminput = RandomGen(16);
+			String regnuminput = CmnCode.RandomGen(16);
 			regnumIn.setText(regnuminput);
 		}
 	}
@@ -181,10 +179,14 @@ public class NewUserWindow extends JFrame implements ActionListener
 			}
 			else
 			{
-				String conIn = regnumIn.getText();
-				String converted = HashBash(conIn);
-				String userIdIn = UserIDRandom(6);
-				String passCon = HashBash(passIn.getText());
+				//String conIn = regnumIn.getText();
+				//String converted = HashBash(conIn);
+				//String userIdIn = UserIDRandom(6);
+				//String passCon = HashBash(passIn.getText());
+				
+				String converted = CmnCode.HashBash(regnumIn.getText());
+				String userIdIn = CmnCode.UserIDRandom(9);
+				String passCon = CmnCode.HashBash(passIn.getText());
 				String values = "'" + userIdIn + "','" + userIn.getText() + "','" + passCon + "','" + userNameIn.getText() + 
 						"','" + userUICIn.getText() + "','" + userLvlIn.getText() + "','" + usrVersionIn.getText() + "','" + converted + "'";
 				PreparedStatement stmt = conn.prepareStatement("insert into user_login (user_id,username,pass,name_first,name_last,account_status,version,regnum) values (" + values + ")");
@@ -196,6 +198,7 @@ public class NewUserWindow extends JFrame implements ActionListener
 		}
 		catch(MySQLIntegrityConstraintViolationException m)
 		{
+			
 			JOptionPane.showMessageDialog(null, "Duplicate Regnum or Login info. Please try again.");
 		}
 		catch(Exception e)
@@ -204,7 +207,7 @@ public class NewUserWindow extends JFrame implements ActionListener
 		}
 	}
 	
-	public String HashBash(String convert)
+	/*public String HashBash(String convert)
 	{
 		try
 		{
@@ -242,5 +245,5 @@ public class NewUserWindow extends JFrame implements ActionListener
 		   for( int i = 0; i < len; i++ ) 
 		      sb.append( CD.charAt( rnd.nextInt(CD.length()) ) );
 		   return sb.toString();
-	}
+	}*/
 }

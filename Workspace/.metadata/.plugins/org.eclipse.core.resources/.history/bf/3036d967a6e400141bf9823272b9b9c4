@@ -1,0 +1,29 @@
+import javax.swing.JFrame;
+
+
+public class MainWindow extends JFrame 
+{
+	
+	static JFrame frame = null;
+	
+	MainWindow()
+	{
+		this.setSize(600, 400);
+		this.setLocation(300, 300);
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setTitle("Main");
+		this.setLayout(null);
+		
+	}
+	
+	public static void main(String[] args) 
+	{
+		CreateGUI();
+	}
+
+	public static void CreateGUI()
+	{
+		frame = new MainWindow();
+		frame.setVisible(true);
+	}
+}

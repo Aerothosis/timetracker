@@ -1,0 +1,26 @@
+import javax.swing.*;
+
+
+public class AddNewItems extends JFrame 
+{
+	static JFrame newClient = null;
+	static JPanel newClientP = null;
+	static JFrame newProj = null;
+	static JPanel newProjP = null;
+	
+	public static void main(String[] args) 
+	{
+		
+	}
+
+	public static JFrame NewClient()
+	{
+		newClient = new JFrame();
+		newClient.setSize(300, 200);
+		newClient.setLocation(400, 300);
+		newClient.setTitle("Add New Client");
+		
+		
+		return newClient;
+	}
+}

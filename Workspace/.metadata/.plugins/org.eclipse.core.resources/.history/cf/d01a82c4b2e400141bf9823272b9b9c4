@@ -1,0 +1,61 @@
+
+
+
+import javax.swing.*;
+import java.awt.event.*;
+
+
+public class AdminWindow extends JFrame implements ActionListener
+{
+	JButton newUser = new JButton("New User");
+	JButton mainMenu = new JButton("Main Menu");
+	
+	
+	static JFrame frame = null;
+	
+	static String userID = "";
+	
+	AdminWindow()
+	{
+		this.setSize(400, 400);
+		this.setLocation(300, 200);
+		this.setTitle("Admin Window");
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setLayout(null);
+		
+		newUser.setSize(100, 30);
+		newUser.setLocation(10,10);
+		newUser.addActionListener(this);
+		this.add(newUser);
+		
+		mainMenu.setSize(100, 30);
+		mainMenu.setLocation(300, 10);
+		mainMenu.addActionListener(this);
+		this.add(mainMenu);
+	}
+
+	public static void main(String[] args) 
+	{
+		CreateGUI("");
+	}
+	
+	public static void CreateGUI(String user)
+	{
+		userID = user;
+		frame = new AdminWindow();
+		frame.setVisible(true);
+	}
+
+	public void actionPerformed(ActionEvent ae) 
+	{
+		if(ae.getSource() == newUser)
+		{
+			NewUserWindow.CreateGUI();
+		}
+		else if(ae.getSource() == mainMenu)
+		{
+			MainWindow.CreateGUI(userID);
+		}
+	}
+
+}

@@ -1,0 +1,42 @@
+
+
+import javax.swing.*;
+import java.awt.event.*;
+
+
+public class MainWindow extends JFrame implements ActionListener
+{
+	JMenuBar menuBar = new JMenuBar();
+	JMenu menuFile, menuEdit, menuSystem;
+	JMenuItem menuNew, menuSave, menuSaveAs, menuOpen, menuExit; //menuFile, in order top to bottom
+	JMenuItem menuPreview; //menuEdit, in order top to bottom
+	JMenuItem menuLogout; // menuSystem, in order top to bottom
+	
+	static JFrame frame = null;
+	
+	MainWindow()
+	{
+		this.setSize(600, 400);
+		this.setLocation(300, 300);
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setTitle("Main");
+		this.setLayout(null);
+		
+	}
+	
+	public static void main(String[] args) 
+	{
+		CreateGUI();
+	}
+
+	public static void CreateGUI()
+	{
+		frame = new MainWindow();
+		frame.setVisible(true);
+	}
+
+	public void actionPerformed(ActionEvent ae) 
+	{
+		
+	}
+}

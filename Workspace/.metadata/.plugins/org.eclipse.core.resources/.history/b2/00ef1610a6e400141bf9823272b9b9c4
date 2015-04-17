@@ -1,0 +1,22 @@
+import javax.swing.JFrame;
+
+
+public class MainWindow extends JFrame 
+{
+	
+	static JFrame frame = null;
+	
+	MainWindow()
+	{}
+	
+	public static void main(String[] args) 
+	{
+		CreateGUI();
+	}
+
+	public static void CreateGUI()
+	{
+		frame = new MainWindow();
+		frame.setVisible(true);
+	}
+}

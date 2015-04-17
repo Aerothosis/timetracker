@@ -1,0 +1,52 @@
+import javax.swing.*;
+import java.awt.event.*;
+
+
+public class AddNewTask extends JFrame implements ActionListener,ItemListener
+{
+	JCheckBox newClient = new JCheckBox("New Client");
+	JTextField newClientIn = new JTextField("");
+	JCheckBox newProj = new JCheckBox("New Project");
+	JTextField newProjIn = new JTextField("");
+	
+	
+	static JFrame frame = null;
+	
+	AddNewTask()
+	{
+		this.setSize(500, 300);
+		this.setLocation(500, 400);
+		this.setTitle("Add New Item");
+		this.setLayout(null);
+		
+		newClient.setSize(100, 30);
+		newClient.setLocation(10, 10);
+		newClient.addItemListener(this);
+		this.add(newClient);
+		
+		newClientIn.setSize(100, 30);
+		newClientIn.setLocation(10, 40);
+		this.add(newClientIn);
+	}
+	
+	public static void main(String[] args) 
+	{
+		CreateGUI();
+	}
+
+	public static void CreateGUI()
+	{
+		frame = new AddNewTask();
+		frame.setVisible(true);
+	}
+
+	public void itemStateChanged(ItemEvent ie) 
+	{
+		
+	}
+
+	public void actionPerformed(ActionEvent ae) 
+	{
+		
+	}
+}

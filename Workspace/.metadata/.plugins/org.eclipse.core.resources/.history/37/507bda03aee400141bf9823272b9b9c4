@@ -1,0 +1,79 @@
+
+
+
+import javax.swing.*;
+import com.mysql.jdbc.*;
+import java.awt.event.*;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+
+public class AddNewClass extends JFrame implements ActionListener
+{
+	static JLabel clientL = new JLabel("Client's Name") ;
+	static JTextField clientIn = new JTextField("");
+	static JButton addClient = new JButton("Add");
+	
+	static JFrame frame = null;
+	
+	AddNewClass()
+	{
+		this.setSize(300, 200);
+		this.setLocation(600, 300);
+		this.setTitle("Add New Client");
+		this.setLayout(null);
+		
+		clientL.setSize(100, 30);
+		clientL.setLocation(10, 10);
+		this.add(clientL);
+		
+		clientIn.setSize(100, 30);
+		clientIn.setLocation(10, 45);
+		this.add(clientIn);
+		
+		addClient.setSize(100, 30);
+		addClient.setLocation(10, 80);
+		addClient.addActionListener(this);
+		this.add(addClient);
+	}
+	
+	public static void main(String[] args) 
+	{
+		CreateGUI();
+	}
+	
+	public static void CreateGUI()
+	{
+		frame = new AddNewClass();
+		frame.setVisible(true);
+	}
+
+	public void actionPerformed(ActionEvent ae) 
+	{
+		java.sql.Connection conn = null;
+		
+		try 
+		{
+			Class.forName("com.mysql.jbdc.Driver").newInstance();
+			String connStr = MysqlConn.conn();
+			conn = DriverManager.getConnection(connStr + MysqlConn.loginAero());
+		} 
+		catch (InstantiationException e) 
+		{
+			e.printStackTrace();
+		} 
+		catch (IllegalAccessException e) 
+		{
+			e.printStackTrace();
+		} 
+		catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (ClassNotFoundException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+
+}

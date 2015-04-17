@@ -8,8 +8,12 @@ import java.awt.event.*;
 public class AdminWindow extends JFrame implements ActionListener
 {
 	JButton newUser = new JButton("New User");
+	JButton mainMenu = new JButton("Main Menu");
+	
 	
 	static JFrame frame = null;
+	
+	static String userID = "";
 	
 	AdminWindow()
 	{
@@ -23,15 +27,21 @@ public class AdminWindow extends JFrame implements ActionListener
 		newUser.setLocation(10,10);
 		newUser.addActionListener(this);
 		this.add(newUser);
+		
+		mainMenu.setSize(100, 30);
+		mainMenu.setLocation(300, 10);
+		mainMenu.addActionListener(this);
+		this.add(mainMenu);
 	}
 
 	public static void main(String[] args) 
 	{
-		CreateGUI();
+		CreateGUI("");
 	}
 	
-	public static void CreateGUI()
+	public static void CreateGUI(String user)
 	{
+		userID = user;
 		frame = new AdminWindow();
 		frame.setVisible(true);
 	}
@@ -41,6 +51,11 @@ public class AdminWindow extends JFrame implements ActionListener
 		if(ae.getSource() == newUser)
 		{
 			NewUserWindow.CreateGUI();
+		}
+		else if(ae.getSource() == mainMenu)
+		{
+			MainWindow.CreateGUI(userID);
+			frame.setVisible(false);
 		}
 	}
 
