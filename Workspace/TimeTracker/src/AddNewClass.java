@@ -75,8 +75,8 @@ public class AddNewClass extends JFrame implements ActionListener
 				pst.setString(1, CmnCode.RandomGen(10) + "");
 				pst.setString(2, clientIn.getText() + "");
 				pst.setString(3, userID + "");
-				//ResultSet rs = pst.executeQuery();
 				pst.execute();
+				JOptionPane.showMessageDialog(null, "Client " + clientIn.getText() + " added.");
 			}
 			else
 			{

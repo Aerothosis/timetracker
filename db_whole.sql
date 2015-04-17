@@ -42,25 +42,45 @@ CREATE TABLE IF NOT EXISTS `assignment_time` (
 
 -- Dumping structure for table mfurtado_timetracker.client
 CREATE TABLE IF NOT EXISTS `client` (
-  `client_id` varchar(50) DEFAULT NULL,
-  `user_id` varchar(50) DEFAULT NULL,
+  `client_id` varchar(10) DEFAULT NULL,
+  `client_name` varchar(255) DEFAULT NULL,
+  `user_id` int(9) DEFAULT NULL,
   UNIQUE KEY `client_id` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table mfurtado_timetracker.client: ~0 rows (approximately)
+-- Dumping data for table mfurtado_timetracker.client: ~4 rows (approximately)
 /*!40000 ALTER TABLE `client` DISABLE KEYS */;
+REPLACE INTO `client` (`client_id`, `client_name`, `user_id`) VALUES
+	('Bblf0HyApJ', 'First Client', 79185817),
+	('vM0f2klfFz', 'First Client Two', 79185817),
+	('VjoLi6qyAw', 'First Client', 794686),
+	('ro3U1sSQfG', 'asdfasdf', 79185817),
+	('A0e8IiyyVy', 'Test Client', 79185817),
+	('Pnlzijrlhp', 'New Client', 79185817),
+	('NY089t5Wza', 'New Client', 794686);
 /*!40000 ALTER TABLE `client` ENABLE KEYS */;
 
 
 -- Dumping structure for table mfurtado_timetracker.project
 CREATE TABLE IF NOT EXISTS `project` (
   `project_id` varchar(50) DEFAULT NULL,
+  `proj_name` varchar(255) DEFAULT NULL,
   `client_id` varchar(50) DEFAULT NULL,
   UNIQUE KEY `project_id` (`project_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping data for table mfurtado_timetracker.project: ~0 rows (approximately)
 /*!40000 ALTER TABLE `project` DISABLE KEYS */;
+REPLACE INTO `project` (`project_id`, `proj_name`, `client_id`) VALUES
+	('r2af29jeUQ', 'First Proj', 'Bblf0HyApJ'),
+	('XlOBOoAMn4', 'Hopefully?', 'A0e8IiyyVy'),
+	('qBIolqbJkx', 'Round Three', 'A0e8IiyyVy'),
+	('7Jm0CAOH80', 'Round Four', 'A0e8IiyyVy'),
+	('2TAKEm9o4t', 'Round Five', 'Bblf0HyApJ'),
+	('FgWVk0DPrJ', 'asdfasdf', 'Bblf0HyApJ'),
+	('V98qtc09HK', 'Test One', 'Pnlzijrlhp'),
+	('ViA6MBsv7A', 'Test One', 'NY089t5Wza'),
+	('46a7kqB8L5', 'asdffdsasdf', 'Pnlzijrlhp');
 /*!40000 ALTER TABLE `project` ENABLE KEYS */;
 
 
@@ -72,32 +92,35 @@ CREATE TABLE IF NOT EXISTS `reg_users` (
   UNIQUE KEY `login` (`login`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table mfurtado_timetracker.reg_users: ~4 rows (approximately)
+-- Dumping data for table mfurtado_timetracker.reg_users: ~2 rows (approximately)
 /*!40000 ALTER TABLE `reg_users` DISABLE KEYS */;
 REPLACE INTO `reg_users` (`regnum`, `login`) VALUES
-	('c5a1a0210133b9f5c3441dc903413fdad1f5828', 'aerothosis');
+	('c5a1a0210133b9f5c3441dc903413fdad1f5828', 'aerothosis'),
+	('303f9e95742a0e01ce1cecda2833750cc14a5de2', 'test');
 /*!40000 ALTER TABLE `reg_users` ENABLE KEYS */;
 
 
 -- Dumping structure for table mfurtado_timetracker.user_login
 CREATE TABLE IF NOT EXISTS `user_login` (
-  `user_id` int(6) DEFAULT NULL,
+  `user_id` int(9) DEFAULT NULL,
   `username` varchar(255) DEFAULT NULL,
   `pass` varchar(255) DEFAULT NULL,
   `name_first` varchar(255) DEFAULT NULL,
   `name_last` varchar(255) DEFAULT NULL,
   `account_status` int(3) DEFAULT '0',
   `version` int(3) DEFAULT '0',
+  `num_of_a` int(3) DEFAULT '0',
   `regnum` varchar(255) DEFAULT NULL,
   UNIQUE KEY `user_id` (`user_id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `regnum` (`regnum`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table mfurtado_timetracker.user_login: ~4 rows (approximately)
+-- Dumping data for table mfurtado_timetracker.user_login: ~2 rows (approximately)
 /*!40000 ALTER TABLE `user_login` DISABLE KEYS */;
-REPLACE INTO `user_login` (`user_id`, `username`, `pass`, `name_first`, `name_last`, `account_status`, `version`, `regnum`) VALUES
-	(794686, 'aerothosis', '62d28c6874dd675a58ccfc0e3618dec13ccd24ec', 'Michael', 'Furtado', 5, 1, 'c5a1a0210133b9f5c3441dc903413fdad1f5828');
+REPLACE INTO `user_login` (`user_id`, `username`, `pass`, `name_first`, `name_last`, `account_status`, `version`, `num_of_a`, `regnum`) VALUES
+	(794686, 'aerothosis', '62d28c6874dd675a58ccfc0e3618dec13ccd24ec', 'Michael', 'Furtado', 5, 1, 0, 'c5a1a0210133b9f5c3441dc903413fdad1f5828'),
+	(79185817, 'test', '62d28c6874dd675a58ccfc0e3618dec13ccd24ec', 'michael', 'furtado', 1, 2, 0, '303f9e95742a0e01ce1cecda2833750cc14a5de2');
 /*!40000 ALTER TABLE `user_login` ENABLE KEYS */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;

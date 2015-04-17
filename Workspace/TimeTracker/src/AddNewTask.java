@@ -1,5 +1,6 @@
 import javax.swing.*;
 
+import java.sql.*;
 import java.awt.event.*;
 
 
@@ -11,15 +12,22 @@ public class AddNewTask extends JFrame implements ActionListener,ItemListener
 	JMenuItem menuPreview, menuAddTask; //menuEdit, in order top to bottom
 	JMenuItem menuLogout; // menuSystem, in order top to bottom
 	
-	JCheckBox newClient = new JCheckBox("New Client");
-	JTextField newClientIn = new JTextField("");
-	JCheckBox newProj = new JCheckBox("New Project");
-	JTextField newProjIn = new JTextField("");
+	//JCheckBox newClient = new JCheckBox("New Client");
+	static JTextField newClientIn = new JTextField("Client");
+	//JCheckBox newProj = new JCheckBox("New Project");
+	static JTextField newProjIn = new JTextField("Proj");
+	JLabel newTaskL = new JLabel("New Task");
+	static JTextField newTaskIn = new JTextField();
+	JButton addTask = new JButton("Add");
+	
 	
 	
 	static JFrame frame = null;
 	boolean nc = false;
 	boolean np = false;
+	static Connection conn = null;
+	static PreparedStatement pst = null;
+	static PreparedStatement pstTwo = null;
 	
 	AddNewTask()
 	{
@@ -28,7 +36,26 @@ public class AddNewTask extends JFrame implements ActionListener,ItemListener
 		this.setTitle("Add New Item");
 		this.setLayout(null);
 		
+		newClientIn.setSize(100, 30);
+		newClientIn.setLocation(10, 40);
+		this.add(newClientIn);
 		
+		newProjIn.setSize(100, 30);
+		newProjIn.setLocation(120, 40);
+		this.add(newProjIn);
+		
+		newTaskL.setSize(100, 30);
+		newTaskL.setLocation(230, 10);
+		this.add(newTaskL);
+		
+		newTaskIn.setSize(100, 30);
+		newTaskIn.setLocation(230, 40);
+		this.add(newTaskIn);
+		
+		addTask.setSize(100, 30);
+		addTask.setLocation(340, 40);
+		addTask.addActionListener(this);
+		this.add(addTask);
 	}
 	
 	public JMenuBar createMenuBar()
@@ -71,6 +98,16 @@ public class AddNewTask extends JFrame implements ActionListener,ItemListener
 
 	public static void CreateGUI()
 	{
+		try 
+		{
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = DriverManager.getConnection(MysqlConn.conn() + MysqlConn.loginAero());
+		} 
+		catch (Exception e) 
+		{
+			JOptionPane.showMessageDialog(null, e);
+		}
+		
 		AddNewTask menuBarTop = new AddNewTask();
 		frame = new AddNewTask();
 		frame.setJMenuBar(menuBarTop.createMenuBar());
@@ -79,7 +116,7 @@ public class AddNewTask extends JFrame implements ActionListener,ItemListener
 
 	public void itemStateChanged(ItemEvent ie) 
 	{
-		if(ie.getSource() == newClient)
+		/*if(ie.getSource() == newClient)
 		{
 			if(!nc)
 			{
@@ -105,7 +142,7 @@ public class AddNewTask extends JFrame implements ActionListener,ItemListener
 				newProjIn.setEditable(false);
 				np = false;
 			}
-		}
+		}*/
 	}
 
 	public void actionPerformed(ActionEvent ae) 
@@ -119,5 +156,14 @@ public class AddNewTask extends JFrame implements ActionListener,ItemListener
 		{
 			AddNewProj.CreateGUI();
 		}
+		else if(ae.getSource() == addTask)
+		{
+			InsertTask();
+		}
+	}
+	
+	public static void InsertTask()
+	{
+		
 	}
 }

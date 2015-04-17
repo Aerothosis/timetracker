@@ -237,28 +237,4 @@ public class LoginWindow extends JFrame implements ActionListener
 		
 		return cleanreg;
 	}
-	
-	/*public static String HashBash(String convert)
-	{
-		try
-		{
-			String plaintext = convert;
-			MessageDigest s = MessageDigest.getInstance("SHA1");
-			s.reset();
-			s.update(plaintext.getBytes());
-			byte[] digest = s.digest();
-			BigInteger bigInt = new BigInteger(1,digest);
-			String hashtext = bigInt.toString(16);
-			// Now we need to zero pad it if you actually want the full 32 chars.
-			while(hashtext.length() < 32 ){
-			  hashtext = "0"+hashtext;
-			}
-			return hashtext;
-		}
-		catch(Exception e)
-		{
-			JOptionPane.showMessageDialog(null, e);
-		}
-		return null;
-	}*/
 }
