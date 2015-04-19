@@ -1,0 +1,150 @@
+
+
+
+
+import javax.swing.*;
+import java.awt.event.*;
+import java.sql.*;
+import java.util.*;
+
+
+public class AddNewProj extends JFrame implements ActionListener
+{
+	static JTextField clientIdIn = new JTextField("ID");
+	static JTextField clientNameIn = new JTextField("Name");
+	JLabel projName = new JLabel("Project Name");
+	static JTextField projIn = new JTextField("");
+	JButton addNew = new JButton("Add");
+	
+	static JFrame frame = null;
+	
+	static Connection conn = null;
+	static PreparedStatement pst = null;
+	static PreparedStatement pstTwo = null;
+	
+	static List<String> clients = new ArrayList<String>();
+	static String[] clientList = null;
+	
+	AddNewProj()
+	{
+		this.setSize(300, 200);
+		this.setLocation(600, 300);
+		this.setTitle("Add New Project");
+		this.setLayout(null);
+		
+		clientIdIn.setSize(100, 30);
+		clientIdIn.setLocation(10, 40);
+		this.add(clientIdIn);
+		
+		clientNameIn.setSize(100, 30);
+		clientNameIn.setLocation(10, 80);
+		this.add(clientNameIn);
+		
+		projName.setSize(100, 30);
+		projName.setLocation(120, 10);
+		this.add(projName);
+		
+		projIn.setSize(100, 30);
+		projIn.setLocation(120, 40);
+		projIn.addActionListener(this);
+		this.add(projIn);
+		
+		addNew.setSize(100, 30);
+		addNew.setLocation(120, 90);
+		addNew.addActionListener(this);
+		this.add(addNew);
+	}
+	
+	public static void main(String[] args) 
+	{
+		CreateGUI();
+	}
+	
+	public static void CreateGUI()
+	{
+		try {
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = DriverManager.getConnection(MysqlConn.conn() + MysqlConn.loginAero());
+			
+			pst = conn.prepareStatement("SELECT client_name FROM client WHERE user_id=?");
+			pst.setString(1, MainWindow.userID);
+			ResultSet rs = pst.executeQuery();
+			
+			while(rs.next())
+			{
+				String client = rs.getString(1);
+				clients.add(new String(client));
+			}
+			
+			//clientList = clientBuild.toArray();
+			clientList = new String[clients.size()];
+			
+			for(int count = 0; count < clients.size(); count++)
+			{
+				clientList[count] = (String) clients.get(count);
+			}
+		} 
+		catch (Exception e) 
+		{
+			JOptionPane.showMessageDialog(null, e);
+		}
+		
+		frame = new AddNewProj();
+		frame.setVisible(true);
+	}
+	
+	public void actionPerformed(ActionEvent ae) 
+	{
+		if(ae.getSource() == addNew || ae.getSource() == projIn)
+		{
+			InsertProj();
+		}
+		else
+		{}
+	}
+	
+	public static void InsertProj()
+	{
+		try 
+		{
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			pstTwo = conn.prepareStatement("SELECT * FROM project WHERE client_id = (SELECT client_id FROM client WHERE client_name=? AND user_id=?) AND proj_name = ?");
+			pstTwo.setString(1, clientNameIn.getText() + "");
+			pstTwo.setString(2, MainWindow.userID);
+			pstTwo.setString(3, projIn.getText() + "");
+			ResultSet rs = pstTwo.executeQuery();
+			
+			if(!rs.next())
+			{
+				pst = conn.prepareStatement("INSERT INTO project (project_id,proj_name,client_id) VALUES (?, ?, (SELECT client_id FROM client WHERE client_name=? AND user_id=?))");
+				pst.setString(1, CmnCode.RandomGen(10) + "");
+				pst.setString(2, projIn.getText() + "");
+				pst.setString(3, clientNameIn.getText() + "");
+				pst.setString(4, MainWindow.userID);
+				pst.execute();
+				JOptionPane.showMessageDialog(null, "Project " + projIn.getText() + " added.");
+				
+				//for(int count = 0; count < clientList.length; count++)
+				//{
+					//String str = clientList[count];
+					JOptionPane.showMessageDialog(null, clientList);
+				//}
+						
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(null, "You already have a project with that name for\nthis client. Please enter a new name");
+			}
+		} 
+		catch(com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException e)
+		{
+			InsertProj();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+	}
+
+}

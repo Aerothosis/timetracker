@@ -3,15 +3,21 @@
 
 
 import javax.swing.*;
-
+import javax.swing.event.*;
 import java.awt.event.*;
 import java.sql.*;
+import java.util.*;
 
 
-public class AddNewProj extends JFrame implements ActionListener
+public class AddNewProj extends JFrame implements ActionListener,ListSelectionListener
 {
-	static JTextField clientIdIn = new JTextField("ID");
-	static JTextField clientNameIn = new JTextField("Name");
+	static JList<String> clientList = null;//new JList<String>();
+	static JScrollPane clientScrl = null;
+	static ArrayList<String> clients = new ArrayList<String>();
+	static Object[] clientTwo = null;
+	static String selClient = null;
+	
+	JLabel clientL = new JLabel("Client");
 	JLabel projName = new JLabel("Project Name");
 	static JTextField projIn = new JTextField("");
 	JButton addNew = new JButton("Add");
@@ -22,6 +28,8 @@ public class AddNewProj extends JFrame implements ActionListener
 	static PreparedStatement pst = null;
 	static PreparedStatement pstTwo = null;
 	
+	
+	
 	AddNewProj()
 	{
 		this.setSize(300, 200);
@@ -29,13 +37,15 @@ public class AddNewProj extends JFrame implements ActionListener
 		this.setTitle("Add New Project");
 		this.setLayout(null);
 		
-		clientIdIn.setSize(100, 30);
-		clientIdIn.setLocation(10, 40);
-		this.add(clientIdIn);
+		clientL.setSize(100, 30);
+		clientL.setLocation(10, 10);
+		this.add(clientL);
 		
-		clientNameIn.setSize(100, 30);
-		clientNameIn.setLocation(10, 80);
-		this.add(clientNameIn);
+		clientList.addListSelectionListener(this);
+		clientScrl = new JScrollPane(clientList);
+		clientScrl.setSize(100, 100);
+		clientScrl.setLocation(10, 40);
+		this.add(clientScrl);
 		
 		projName.setSize(100, 30);
 		projName.setLocation(120, 10);
@@ -62,12 +72,32 @@ public class AddNewProj extends JFrame implements ActionListener
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			conn = DriverManager.getConnection(MysqlConn.conn() + MysqlConn.loginAero());
+			
+			pst = conn.prepareStatement("SELECT client_name FROM client WHERE user_id=?");
+			pst.setString(1, MainWindow.userID);
+			ResultSet rs = pst.executeQuery();
+			
+			int count = 0;
+			while(rs.next())
+			{
+				String client = rs.getString(1);
+				clients.add(new String(client));
+				//clientList.add(client);
+				count++;
+			}
+			
+			clientTwo = new Object[clients.size()];
+			for(int counter = 0;counter<clientTwo.length;counter++)
+			{
+				clientTwo[counter] = clients.get(counter);
+			}
+			clientList = new JList(clientTwo);
+			
 		} 
 		catch (Exception e) 
 		{
 			JOptionPane.showMessageDialog(null, e);
 		}
-		
 		
 		frame = new AddNewProj();
 		frame.setVisible(true);
@@ -89,7 +119,8 @@ public class AddNewProj extends JFrame implements ActionListener
 		{
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			pstTwo = conn.prepareStatement("SELECT * FROM project WHERE client_id = (SELECT client_id FROM client WHERE client_name=? AND user_id=?) AND proj_name = ?");
-			pstTwo.setString(1, clientNameIn.getText() + "");
+			//pstTwo.setString(1, clientNameIn.getText() + "");
+			pstTwo.setString(1, selClient);
 			pstTwo.setString(2, MainWindow.userID);
 			pstTwo.setString(3, projIn.getText() + "");
 			ResultSet rs = pstTwo.executeQuery();
@@ -99,10 +130,11 @@ public class AddNewProj extends JFrame implements ActionListener
 				pst = conn.prepareStatement("INSERT INTO project (project_id,proj_name,client_id) VALUES (?, ?, (SELECT client_id FROM client WHERE client_name=? AND user_id=?))");
 				pst.setString(1, CmnCode.RandomGen(10) + "");
 				pst.setString(2, projIn.getText() + "");
-				pst.setString(3, clientNameIn.getText() + "");
+				//pst.setString(3, clientNameIn.getText() + "");
+				pst.setString(3, selClient);
 				pst.setString(4, MainWindow.userID);
 				pst.execute();
-				JOptionPane.showMessageDialog(null, "Project " + projIn.getText() + " added.");
+				JOptionPane.showMessageDialog(null, "Project " + projIn.getText() + " added.");	
 			}
 			else
 			{
@@ -118,6 +150,14 @@ public class AddNewProj extends JFrame implements ActionListener
 			e.printStackTrace();
 		}
 		
+	}
+	
+
+	public void valueChanged(ListSelectionEvent le) 
+	{
+		int index = clientList.getSelectedIndex();
+		selClient = clients.get(index);
+		JOptionPane.showMessageDialog(null, selClient);
 	}
 
 }

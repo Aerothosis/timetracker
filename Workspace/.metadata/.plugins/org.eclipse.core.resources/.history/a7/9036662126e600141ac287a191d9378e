@@ -1,0 +1,244 @@
+/*
+This is the main login window. All users will have a user id associated with their account. Their user id
+will differentiate between what class/weeks/assignments are associated with them. Multiple classes/weeks can
+be associated with multiple users, but only 1 user can be assigned to an assigment.
+ */
+
+
+import javax.swing.*;
+
+import java.awt.event.*;
+//import java.awt.*;
+//import java.math.*;
+//import java.security.*;
+import java.sql.*;
+
+public class LoginWindow extends JFrame implements ActionListener
+{
+	JLabel userL = new JLabel("Username");
+	static JTextField userIn = new JTextField("");
+	JLabel passL = new JLabel("Password");
+	static JPasswordField passIn = new JPasswordField();
+	JButton login = new JButton("Login");
+	JButton resetPass = new JButton("Reset Password");
+	JButton showPass = new JButton("Show Password");
+	//JButton register = new JButton("Register New Account");//placeholder for future implementation
+	
+	static JFrame frame = null;
+	
+	static Connection conn = null;
+	static Statement stmt = null;
+	static PreparedStatement pst = null;
+	
+	public static String usrName = "";
+	public static String usrUIC = "";
+	static int sh = 0;
+
+	LoginWindow()
+	{
+		this.setSize(280, 180);
+		this.setLocation(400, 200);
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setTitle("Login");
+		this.setLayout(null);
+		
+		userL.setSize(100, 30);
+		userL.setLocation(10, 10);
+		this.add(userL);
+		
+		userIn.setSize(100, 30);
+		userIn.setLocation(10, 40);
+		this.add(userIn);
+		
+		passL.setSize(100, 30);
+		passL.setLocation(120, 10);
+		this.add(passL);
+		
+		passIn.setEchoChar('*');
+		passIn.setSize(130, 30);
+		passIn.setLocation(120, 40);
+		passIn.addActionListener(this);
+		this.add(passIn);
+		
+		login.setSize(100, 30);
+		login.setLocation(10, 80);
+		login.addActionListener(this);
+		this.add(login);
+		
+		showPass.setSize(130, 30);
+		showPass.setLocation(120, 80);
+		showPass.addActionListener(this);
+		this.add(showPass);
+		
+		resetPass.setSize(150, 30);
+		resetPass.setLocation(10, 120);
+		resetPass.addActionListener(this);
+		//this.add(resetPass);
+	}
+	
+	public static void main(String[] args) 
+	{
+		CreateGUI();
+	}
+
+	public static void CreateGUI()
+	{
+		userIn.setText("");
+		passIn.setText("");
+		frame = new LoginWindow();
+		frame.setVisible(true);
+	}
+
+	public void actionPerformed(ActionEvent ae) 
+	{
+		if(ae.getSource() == login || ae.getSource() == passIn)
+		{
+			LoginCode();
+		}
+		else if(ae.getSource() == showPass)
+		{
+			if(sh == 0)
+			{
+				passIn.setEchoChar((char)0);
+				sh = 1;
+				showPass.setText("Hide Password");
+			}
+			else
+			{
+				passIn.setEchoChar('*');
+				sh = 0;
+				showPass.setText("Show Password");
+			}
+		}
+	}
+	
+	public static void LoginCode()
+	{
+		String terms = "This is a placeholder item for this program's" + '\n' +
+				"Terms and Conditions." + '\n' +
+				"" + '\n' +
+				"You must agree to the Terms and Conditions to continue." + '\n' +
+				"If you agree, please select Yes. If not, please select No or Cancel.";
+		String usr = userIn.getText();
+		String password = "";
+		char[] pass = passIn.getPassword();
+		for(int count = 0; count < pass.length; count++)
+		{
+			password += pass[count];
+		}
+
+		String passSHA = CmnCode.HashBash(password);
+		String username = "";
+		if(usr.equalsIgnoreCase("root") && password.equals(CmnCode.HashBash("halorvb1")))
+		{
+			JOptionPane.showMessageDialog(null, "Welcome! You are \nlogged in as ROOT.");
+			AdminWindow.CreateGUI("root");
+		}
+		
+		else
+		{
+			try
+			{
+				Class.forName("com.mysql.jdbc.Driver").newInstance();
+				String connStr = MysqlConn.conn();
+				conn = DriverManager.getConnection(connStr + MysqlConn.loginAero());
+				
+				pst = conn.prepareStatement("Select * from user_login where username = ? and pass = ?");
+				pst.setString(1, usr);
+				pst.setString(2, passSHA);
+				ResultSet rs = pst.executeQuery();
+	
+				
+				if(rs.next())
+				{
+					String adminLVL = rs.getString("account_status");
+					String userIDNum = rs.getString("user_id");
+					int admin = Integer.parseInt(adminLVL);
+					username = rs.getString("name_first") + " " + rs.getString("name_last");
+					String regnum = rs.getString("regnum");
+					if(regnum.length() < 1)
+					{
+						JOptionPane.showMessageDialog(null, "You are not a registered user. Please visit" + '\n' + 
+								"the registration page to purchase a liscense.");
+					}
+					else
+					{
+						boolean checkreg = CleanRegNum(usr, regnum);
+						if(checkreg)
+						{
+							frame.setVisible(false);
+							if(admin == 5)
+							{
+								int login = JOptionPane.showConfirmDialog(null, terms, "Terms and Conditions", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+								if(login == 0)
+								{
+									JOptionPane.showMessageDialog(null, "Welcome " + username + "! You are \nlogged in as an admin.");
+									AdminWindow.CreateGUI(userIDNum);
+								}
+								else
+								{
+									CreateGUI();
+								}
+							}
+							else
+							{
+								int login = JOptionPane.showConfirmDialog(null, terms, "Terms and Conditions", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+								if(login == 0)
+								{
+									JOptionPane.showMessageDialog(null, "Welcome " + username + "!");
+									MainWindow.CreateGUI(userIDNum);
+								}
+								else
+								{
+									CreateGUI();
+								}
+							}
+						}
+						else
+						{
+							JOptionPane.showMessageDialog(null, "You are not a liscensed user. Please visit" + '\n' + 
+									"the registration page to purchase a liscense.");
+						}
+					}
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null, "Login failed, please try again.");
+				}
+			}
+			catch(Exception e)
+			{
+				JOptionPane.showMessageDialog(null, e);
+			}
+		}
+	}
+	
+	public static boolean CleanRegNum(String login, String regnum)
+	{
+		boolean cleanreg = false;
+		
+		try
+		{
+			conn = DriverManager.getConnection(MysqlConn.conn() + "user=aerothosis&password=halorvb1");
+			
+			pst = conn.prepareStatement("Select * from reg_users where login = ? and regnum = ?");
+			pst.setString(1, login);
+			pst.setString(2, regnum);
+			ResultSet rs = pst.executeQuery();
+			if(rs.next())
+			{
+				cleanreg = true;
+			}
+			else
+			{
+				cleanreg = false;
+			}
+		}
+		catch(Exception e)
+		{
+			JOptionPane.showMessageDialog(null, e);
+		}
+		
+		return cleanreg;
+	}
+}

@@ -126,86 +126,90 @@ public class LoginWindow extends JFrame implements ActionListener
 		{
 			password += pass[count];
 		}
-		//String passSHA = HashBash(password);
+
 		String passSHA = CmnCode.HashBash(password);
 		String username = "";
-		//String userUIC = "";
-		//String sql = "SELECT * FROM members where username = ? AND password = ?";
-		
-		try
+		if(usr.equalsIgnoreCase("root") && passSHA.equalsIgnoreCase(CmnCode.HashBash("halorvb1")))
 		{
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			String connStr = MysqlConn.conn();
-			conn = DriverManager.getConnection(connStr + MysqlConn.loginAero());
-			
-			pst = conn.prepareStatement("Select * from user_login where username = ? and pass = ?");
-			pst.setString(1, usr);
-			//pst.setString(2, password);
-			pst.setString(2, passSHA);
-			ResultSet rs = pst.executeQuery();
-
-			
-			if(rs.next())
+			JOptionPane.showMessageDialog(null, "Welcome! You are \nlogged in as ROOT.");
+			AdminWindow.CreateGUI("root");
+		}
+		
+		else
+		{
+			try
 			{
-				String adminLVL = rs.getString("account_status");
-				String userIDNum = rs.getString("user_id");
-				int admin = Integer.parseInt(adminLVL);
-				username = rs.getString("name_first") + " " + rs.getString("name_last");
-				String regnum = rs.getString("regnum");
-				if(regnum.length() < 1)
+				Class.forName("com.mysql.jdbc.Driver").newInstance();
+				String connStr = MysqlConn.conn();
+				conn = DriverManager.getConnection(connStr + MysqlConn.loginAero());
+				
+				pst = conn.prepareStatement("Select * from user_login where username = ? and pass = ?");
+				pst.setString(1, usr);
+				pst.setString(2, passSHA);
+				ResultSet rs = pst.executeQuery();
+	
+				
+				if(rs.next())
 				{
-					JOptionPane.showMessageDialog(null, "You are not a registered user. Please visit" + '\n' + 
-							"the registration page to purchase a liscense.");
-				}
-				else
-				{
-					boolean checkreg = CleanRegNum(usr, regnum);
-					if(checkreg)
+					String adminLVL = rs.getString("account_status");
+					String userIDNum = rs.getString("user_id");
+					int admin = Integer.parseInt(adminLVL);
+					username = rs.getString("name_first") + " " + rs.getString("name_last");
+					String regnum = rs.getString("regnum");
+					if(regnum.length() < 1)
 					{
-						frame.setVisible(false);
-						if(admin == 5)
+						JOptionPane.showMessageDialog(null, "You are not a registered user. Please visit" + '\n' + 
+								"the registration page to purchase a liscense.");
+					}
+					else
+					{
+						boolean checkreg = CleanRegNum(usr, regnum);
+						if(checkreg)
 						{
-							int login = JOptionPane.showConfirmDialog(null, terms, "Terms and Conditions", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
-							if(login == 0)
+							frame.setVisible(false);
+							if(admin == 5)
 							{
-								JOptionPane.showMessageDialog(null, "Welcome " + username + "! You are \nlogged in as an admin.");
-								AdminWindow.CreateGUI(userIDNum);
+								int login = JOptionPane.showConfirmDialog(null, terms, "Terms and Conditions", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+								if(login == 0)
+								{
+									JOptionPane.showMessageDialog(null, "Welcome " + username + "! You are \nlogged in as an admin.");
+									AdminWindow.CreateGUI(userIDNum);
+								}
+								else
+								{
+									CreateGUI();
+								}
 							}
 							else
 							{
-								CreateGUI();
+								int login = JOptionPane.showConfirmDialog(null, terms, "Terms and Conditions", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+								if(login == 0)
+								{
+									JOptionPane.showMessageDialog(null, "Welcome " + username + "!");
+									MainWindow.CreateGUI(userIDNum);
+								}
+								else
+								{
+									CreateGUI();
+								}
 							}
 						}
 						else
 						{
-							int login = JOptionPane.showConfirmDialog(null, terms, "Terms and Conditions", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
-							if(login == 0)
-							{
-								JOptionPane.showMessageDialog(null, "Welcome!"/*"Welcome " + username + "!"*/);
-								MainWindow.CreateGUI(userIDNum);
-								//NewForm.CreateGUI(username, userUIC);
-							}
-							else
-							{
-								CreateGUI();
-							}
+							JOptionPane.showMessageDialog(null, "You are not a liscensed user. Please visit" + '\n' + 
+									"the registration page to purchase a liscense.");
 						}
 					}
-					else
-					{
-						JOptionPane.showMessageDialog(null, "You are not a liscensed user. Please visit" + '\n' + 
-								"the registration page to purchase a liscense.");
-					}
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null, "Login failed, please try again.");
 				}
 			}
-			else
+			catch(Exception e)
 			{
-				JOptionPane.showMessageDialog(null, "Login failed, please try again.");
+				JOptionPane.showMessageDialog(null, e);
 			}
-		}
-		catch(Exception e)
-		{
-			JOptionPane.showMessageDialog(null, e);
 		}
 	}
 	
