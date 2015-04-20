@@ -18,6 +18,7 @@ public class AddNewTask extends JFrame implements ActionListener,ListSelectionLi
 	JLabel newTaskL = new JLabel("New Task");
 	static JTextField newTaskIn = new JTextField();
 	JButton addTask = new JButton("Add");
+	JButton refresh = new JButton("Refresh Lists");
 	
 	JLabel clientL = new JLabel("Clients");
 	static JList<String> clientLst = null;//new JList<String>();
@@ -66,20 +67,11 @@ public class AddNewTask extends JFrame implements ActionListener,ListSelectionLi
 		projL.setLocation(120, 10);
 		this.add(projL);
 		
-		/*projList.addListSelectionListener(this);
 		projScrl = new JScrollPane(projList);
 		projScrl.setSize(100, 100);
 		projScrl.setLocation(120, 40);
-		this.add(projScrl);*/
-		
-		newClientIn.setSize(100, 30);
-		newClientIn.setLocation(10, 40);
-		//this.add(newClientIn);
-		
-		newProjIn.setSize(100, 30);
-		newProjIn.setLocation(120, 40);
-		//this.add(newProjIn);
-		
+		this.add(projScrl);
+				
 		newTaskL.setSize(100, 30);
 		newTaskL.setLocation(230, 10);
 		this.add(newTaskL);
@@ -92,6 +84,11 @@ public class AddNewTask extends JFrame implements ActionListener,ListSelectionLi
 		addTask.setLocation(340, 40);
 		addTask.addActionListener(this);
 		this.add(addTask);
+		
+		refresh.setSize(210, 30);
+		refresh.setLocation(230, 80);
+		refresh.addActionListener(this);
+		this.add(refresh);
 	}
 	
 	public JMenuBar createMenuBar()
@@ -134,12 +131,15 @@ public class AddNewTask extends JFrame implements ActionListener,ListSelectionLi
 
 	public static void CreateGUI()
 	{
+		NullUp();
+		
 		try 
 		{
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			conn = DriverManager.getConnection(MysqlConn.conn() + MysqlConn.loginAero());
 			
 			ClientPull();
+			ProjPull("89664425");
 		} 
 		catch (Exception e) 
 		{
@@ -166,6 +166,10 @@ public class AddNewTask extends JFrame implements ActionListener,ListSelectionLi
 		else if(ae.getSource() == addTask)
 		{
 			InsertTask();
+		}
+		else if(ae.getSource() == refresh)
+		{
+			RefreshLists();
 		}
 	}
 	
@@ -216,27 +220,18 @@ public class AddNewTask extends JFrame implements ActionListener,ListSelectionLi
 	{
 		if(lse.getSource() == clientLst)
 		{
-			int index = clientLst.getSelectedIndex();
-			
-			tempClient = clients.get(index);
-			//selClient = clients.get(index);
-			//if(!cliSel)
-			//{
+			if(clientLst.getSelectedIndex() >= 0)
+			{
+				int index = clientLst.getSelectedIndex();
+				tempClient = clients.get(index);
+				
 				if(tempClient != selClient)
 				{
-					//projScrl.setVisible(false);\
 					selClient = tempClient;
-					ProjPull(selClient);
-					//JOptionPane.showMessageDialog(null, "Client Sel ");
+					ProjPull(tempClient);
+					projScrl.updateUI();
 				}
-				else
-				{}
-			//}
-			//else
-			//{
-				
-			//}
-			
+			}
 		}
 		else if(!lse.getValueIsAdjusting() && lse.getSource() == projList)
 		{
@@ -280,14 +275,26 @@ public class AddNewTask extends JFrame implements ActionListener,ListSelectionLi
 	{
 		cliSel = true;
 		projList = null;
-		projScrl = null;
+		//projScrl = null;
+		projects = null;
 		projects = new ArrayList<String>();
 		projectsTwo = null;
+		String selectCli = selCl;
+				
+		
 		try 
 		{
-			pst = conn.prepareStatement("SELECT client_id FROM client WHERE client_name=? AND user_id=?");
-			pst.setString(1, selClient);
-			pst.setString(2, MainWindow.userID);
+			if(selectCli.equalsIgnoreCase("89664425"))
+			{
+				pst = conn.prepareStatement("SELECT client_id FROM client WHERE user_id=?");//select all
+				pst.setString(1, MainWindow.userID);
+			}
+			else
+			{
+				pst = conn.prepareStatement("SELECT client_id FROM client WHERE client_name=? AND user_id=?");
+				pst.setString(1, selectCli);
+				pst.setString(2, MainWindow.userID);
+			}
 			ResultSet rs = pst.executeQuery();
 			
 			while(rs.next())
@@ -308,22 +315,71 @@ public class AddNewTask extends JFrame implements ActionListener,ListSelectionLi
 				{
 					projectsTwo[counter] = projects.get(counter);
 				}
-				projList = new JList(projectsTwo);
+				
 			}
 			
-			//projList.addListSelectionListener(frame);
-			projScrl = new JScrollPane(projList);
+			projList = new JList(projectsTwo);
+			/*projScrl = new JScrollPane(projList);
 			projScrl.setSize(100, 100);
 			projScrl.setLocation(120, 40);
-			frame.add(projScrl);
-			projScrl.setVisible(true);
-			projScrl.updateUI();
+			frame.add(projScrl);*/
+			//projScrl.setVisible(true);
+			projList.updateUI();
+			//projScrl.updateUI();
+		} 
+		catch (Exception e) 
+		{
+			//JOptionPane.showMessageDialog(null, e + " PROJ");
+			e.printStackTrace();
+		}
+	}
+	
+	public static void RefreshLists()
+	{
+		/*clientLst.clearSelection();
+		clientScrl.updateUI();
+		projScrl.updateUI();*/
+		
+		NullUp();
+		
+		try 
+		{
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = DriverManager.getConnection(MysqlConn.conn() + MysqlConn.loginAero());
+			
+			ClientPull();
 		} 
 		catch (Exception e) 
 		{
 			JOptionPane.showMessageDialog(null, e);
 		}
+	}
+	
+	public static void NullUp()
+	{
+		
+		clientLst = null;//new JList<String>();
+		clientScrl = null;
+		clients = new ArrayList<String>();
+		clientTwo = null;
+		selClient = "";
+		tempClient = ""; 
+		clID = "";
 		
 		
+		projList = null;
+		projScrl = null;
+		projects = new ArrayList<String>();
+		projectsTwo = null;
+		selProj = "";
+		tempProj = ""; 
+		projID = "";
+		 
+		frame = null;
+		cliSel = false;
+		conn = null;
+		pst = null; 
+		pstTwo = null; 
+		pstThree = null;
 	}
 }

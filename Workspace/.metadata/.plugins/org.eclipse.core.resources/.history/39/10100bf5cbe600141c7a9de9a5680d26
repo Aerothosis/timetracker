@@ -1,0 +1,312 @@
+import javax.swing.*;
+import javax.swing.event.*;
+import java.sql.*;
+import java.util.*;
+import java.awt.event.*;
+
+
+public class AddNewTask extends JFrame implements ActionListener,ListSelectionListener
+{
+	JMenuBar menuBar = new JMenuBar();
+	JMenu menuFile, menuEdit, menuSystem;
+	JMenuItem menuNewClient, menuNewProj, menuSaveAs, menuOpen, menuExit; //menuFile, in order top to bottom
+	JMenuItem menuPreview, menuAddTask; //menuEdit, in order top to bottom
+	JMenuItem menuLogout; // menuSystem, in order top to bottom
+	
+	static JTextField newClientIn = new JTextField("Client");
+	static JTextField newProjIn = new JTextField("Proj");
+	JLabel newTaskL = new JLabel("New Task");
+	static JTextField newTaskIn = new JTextField();
+	JButton addTask = new JButton("Add");
+	JButton refresh = new JButton("Refresh Lists");
+	
+	JLabel clientL = new JLabel("Clients");
+	static JList<String> clientLst = null;//new JList<String>();
+	static JScrollPane clientScrl = null;
+	static ArrayList<String> clients = new ArrayList<String>();
+	static Object[] clientTwo = null;
+	static String selClient = "";
+	static String tempClient = "";
+	static String clID = "";
+	
+	JLabel projL = new JLabel("Projects");
+	static JList<String> projList = null;
+	static JScrollPane projScrl = null;
+	static ArrayList<String> projects = new ArrayList<String>();
+	static Object[] projectsTwo = null;
+	static String selProj = "";
+	static String tempProj = "";
+	static String projID = "";
+	
+	static JFrame frame = null;
+	static boolean cliSel = false;
+	boolean np = false;
+	static Connection conn = null;
+	static PreparedStatement pst = null;
+	static PreparedStatement pstTwo = null;
+	static PreparedStatement pstThree = null;
+	
+	AddNewTask()
+	{
+		this.setSize(500, 300);
+		this.setLocation(500, 400);
+		this.setTitle("Add New Item");
+		this.setLayout(null);
+		
+		clientL.setSize(100, 30);
+		clientL.setLocation(10, 10);
+		this.add(clientL);
+		
+		clientLst.addListSelectionListener(this);
+		clientScrl = new JScrollPane(clientLst);
+		clientScrl.setSize(100, 100);
+		clientScrl.setLocation(10, 40);
+		this.add(clientScrl);
+		
+		projL.setSize(100, 30);
+		projL.setLocation(120, 10);
+		this.add(projL);
+				
+		newTaskL.setSize(100, 30);
+		newTaskL.setLocation(230, 10);
+		this.add(newTaskL);
+		
+		newTaskIn.setSize(100, 30);
+		newTaskIn.setLocation(230, 40);
+		this.add(newTaskIn);
+		
+		addTask.setSize(100, 30);
+		addTask.setLocation(340, 40);
+		addTask.addActionListener(this);
+		this.add(addTask);
+		
+		refresh.setSize(210, 30);
+		refresh.setLocation(230, 80);
+		refresh.addActionListener(this);
+		this.add(refresh);
+	}
+	
+	public JMenuBar createMenuBar()
+	{
+		menuFile = new JMenu("File");
+		menuFile.getAccessibleContext().setAccessibleDescription("File Menu");
+		menuFile.setMnemonic(KeyEvent.VK_F);
+		menuBar.add(menuFile);
+		
+		menuNewClient = new JMenuItem("New Client");
+		menuNewClient.addActionListener(this);
+		menuFile.add(menuNewClient);
+		
+		menuNewProj = new JMenuItem("New Project");
+		menuNewProj.addActionListener(this);
+		menuFile.add(menuNewProj);
+		
+		menuExit = new JMenuItem("Exit");
+		menuExit.addActionListener(this);
+		menuExit.setMnemonic(KeyEvent.VK_E);
+		menuFile.add(menuExit);
+		
+		
+		menuEdit = new JMenu("Edit");
+		menuEdit.getAccessibleContext().setAccessibleDescription("Edit Menu");
+		menuBar.add(menuEdit);
+		
+		
+		menuSystem = new JMenu("System");
+		menuSystem.getAccessibleContext().setAccessibleDescription("System Menu");
+		menuBar.add(menuSystem);
+		
+		return menuBar;
+	}
+	
+	public static void main(String[] args) 
+	{
+		CreateGUI();
+	}
+
+	public static void CreateGUI()
+	{
+		try 
+		{
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = DriverManager.getConnection(MysqlConn.conn() + MysqlConn.loginAero());
+			
+			ClientPull();
+		} 
+		catch (Exception e) 
+		{
+			JOptionPane.showMessageDialog(null, e);
+		}
+		
+		AddNewTask menuBarTop = new AddNewTask();
+		frame = new AddNewTask();
+		frame.setJMenuBar(menuBarTop.createMenuBar());
+		frame.setVisible(true);
+	}
+
+	public void actionPerformed(ActionEvent ae) 
+	{
+		if(ae.getSource() == menuNewClient)
+		{
+			AddNewClass.CreateGUI();
+			
+		}
+		else if(ae.getSource() == menuNewProj)
+		{
+			AddNewProj.CreateGUI();
+		}
+		else if(ae.getSource() == addTask)
+		{
+			InsertTask();
+		}
+		else if(ae.getSource() == refresh)
+		{
+			
+		}
+	}
+	
+	public static void InsertTask()
+	{
+		try 
+		{
+			pst = conn.prepareStatement("SELECT project_id FROM project WHERE proj_name=? AND client_id=? ");
+			pst.setString(1, "Fuck Yeah!");//selProj);
+			pst.setString(2, clID);//"Pnlzijrlhp");
+			ResultSet rs = pst.executeQuery();
+			
+			if(rs.next())
+			{
+				projID = rs.getString(1);
+				pstTwo = conn.prepareStatement("SELECT ass_id FROM assignment WHERE ass_name=? AND proj_id=?");
+				pstTwo.setString(1, newTaskIn.getText());
+				pstTwo.setString(2, projID);
+				ResultSet rs2 = pstTwo.executeQuery();
+				
+				if(!rs2.next())
+				{
+					pstThree = conn.prepareStatement("INSERT INTO assignment (ass_id,ass_name,proj_id,user_id) VALUES (?, ?, ?, ?)");
+					pstThree.setString(1, CmnCode.RandomGen(10));
+					pstThree.setString(2, newTaskIn.getText());
+					pstThree.setString(3, projID);
+					pstThree.setString(4, MainWindow.userID);
+					pstThree.execute();
+					JOptionPane.showMessageDialog(null, "Assignment " + newTaskIn.getText() + " added.");
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null, "You already have an assignment with\nthat name for this project.");
+				}
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(null, "FAILED");
+			}
+		} 
+		catch (Exception e) 
+		{
+			JOptionPane.showMessageDialog(null, e);
+		}
+	}
+
+	public void valueChanged(ListSelectionEvent lse) 
+	{
+		if(lse.getSource() == clientLst)
+		{
+			int index = clientLst.getSelectedIndex();
+			tempClient = clients.get(index);
+			
+			if(tempClient != selClient)
+			{
+				selClient = tempClient;
+				ProjPull(selClient);
+			}		
+		}
+		else if(!lse.getValueIsAdjusting() && lse.getSource() == projList)
+		{
+			int projIndex = projList.getSelectedIndex();
+			tempProj = projects.get(projIndex);
+			if(tempProj != selProj)
+			{
+				selProj = tempProj;
+			}
+		}
+	}
+	
+	public static void ClientPull()
+	{
+		try 
+		{
+			pst = conn.prepareStatement("SELECT client_name FROM client WHERE user_id=?");
+			pst.setString(1, MainWindow.userID);
+			ResultSet rs = pst.executeQuery();
+			
+			while(rs.next())
+			{
+				String client = rs.getString(1);
+				clients.add(new String(client));
+			}
+			
+			clientTwo = new Object[clients.size()];
+			for(int counter = 0;counter<clientTwo.length;counter++)
+			{
+				clientTwo[counter] = clients.get(counter);
+			}
+			clientLst = new JList(clientTwo);
+		} 
+		catch (Exception e) 
+		{
+			JOptionPane.showMessageDialog(null, e);
+		}
+	}
+	
+	public static void ProjPull(String selCl)
+	{
+		cliSel = true;
+		projList = null;
+		projScrl = null;
+		projects = new ArrayList<String>();
+		projectsTwo = null;
+		try 
+		{
+			pst = conn.prepareStatement("SELECT client_id FROM client WHERE client_name=? AND user_id=?");
+			pst.setString(1, selClient);
+			pst.setString(2, MainWindow.userID);
+			ResultSet rs = pst.executeQuery();
+			
+			while(rs.next())
+			{
+				clID = rs.getString(1);
+				pstTwo = conn.prepareStatement("SELECT proj_name FROM project WHERE client_id=?");
+				pstTwo.setString(1, clID);
+				ResultSet rsTwo = pstTwo.executeQuery();
+				
+				while(rsTwo.next())
+				{
+					String projIn = rsTwo.getString(1);
+					projects.add(new String(projIn));
+				}
+				
+				projectsTwo = new Object[projects.size()];
+				for(int counter = 0;counter<projectsTwo.length;counter++)
+				{
+					projectsTwo[counter] = projects.get(counter);
+				}
+				projList = new JList(projectsTwo);
+			}
+			
+			//projList.addListSelectionListener(frame);
+			projScrl = new JScrollPane(projList);
+			projScrl.setSize(100, 100);
+			projScrl.setLocation(120, 40);
+			frame.add(projScrl);
+			projScrl.setVisible(true);
+			projScrl.updateUI();
+		} 
+		catch (Exception e) 
+		{
+			JOptionPane.showMessageDialog(null, e);
+		}
+		
+		
+	}
+}

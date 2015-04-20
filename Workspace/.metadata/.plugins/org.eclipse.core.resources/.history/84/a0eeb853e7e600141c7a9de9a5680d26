@@ -1,0 +1,24 @@
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+
+
+public class SelClass extends JFrame 
+{
+	JMenuBar menuBar = new JMenuBar();
+	JMenu menuFile, menuEdit, menuSystem;
+	JMenuItem menuNewClient, menuNewProj, menuSaveAs, menuOpen, menuExit; //menuFile, in order top to bottom
+	JMenuItem menuPreview, menuAddTask; //menuEdit, in order top to bottom
+	JMenuItem menuLogout; // menuSystem, in order top to bottom
+	
+	public static void main(String[] args) 
+	{
+		
+	}
+
+	public static void CreateGUI()
+	{
+		
+	}
+}

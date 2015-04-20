@@ -1,0 +1,27 @@
+
+
+
+import javax.swing.*;
+import javax.swing.event.*;
+import java.awt.event.*;
+import java.sql.*;
+
+
+public class SelClass extends JFrame implements ActionListener,ListSelectionListener
+{
+	JMenuBar menuBar = new JMenuBar();
+	JMenu menuFile, menuEdit, menuSystem;
+	JMenuItem menuNewClient, menuNewProj, menuSaveAs, menuOpen, menuExit; //menuFile, in order top to bottom
+	JMenuItem menuPreview, menuAddTask; //menuEdit, in order top to bottom
+	JMenuItem menuLogout; // menuSystem, in order top to bottom
+	
+	public static void main(String[] args) 
+	{
+		
+	}
+
+	public static void CreateGUI()
+	{
+		
+	}
+}
