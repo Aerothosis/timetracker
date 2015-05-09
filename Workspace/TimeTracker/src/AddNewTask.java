@@ -67,6 +67,7 @@ public class AddNewTask extends JFrame implements ActionListener,ListSelectionLi
 		projL.setLocation(120, 10);
 		this.add(projL);
 		
+		projList.addListSelectionListener(this);
 		projScrl = new JScrollPane(projList);
 		projScrl.setSize(100, 100);
 		projScrl.setLocation(120, 40);
@@ -146,10 +147,17 @@ public class AddNewTask extends JFrame implements ActionListener,ListSelectionLi
 			JOptionPane.showMessageDialog(null, e);
 		}
 		
-		AddNewTask menuBarTop = new AddNewTask();
+		try
+		{
+		AddNewTask menuBar = new AddNewTask();
 		frame = new AddNewTask();
-		frame.setJMenuBar(menuBarTop.createMenuBar());
+		frame.setJMenuBar(menuBar.createMenuBar());
 		frame.setVisible(true);
+		}
+		catch(Exception e)
+		{
+			JOptionPane.showMessageDialog(null, e);
+		}
 	}
 
 	public void actionPerformed(ActionEvent ae) 
@@ -178,8 +186,8 @@ public class AddNewTask extends JFrame implements ActionListener,ListSelectionLi
 		try 
 		{
 			pst = conn.prepareStatement("SELECT project_id FROM project WHERE proj_name=? AND client_id=? ");
-			pst.setString(1, "Fuck Yeah!");//selProj);
-			pst.setString(2, clID);//"Pnlzijrlhp");
+			pst.setString(1, selProj);
+			pst.setString(2, "Pnlzijrlhp");
 			ResultSet rs = pst.executeQuery();
 			
 			if(rs.next())
@@ -220,26 +228,40 @@ public class AddNewTask extends JFrame implements ActionListener,ListSelectionLi
 	{
 		if(lse.getSource() == clientLst)
 		{
-			if(clientLst.getSelectedIndex() >= 0)
-			{
+			//if(clientLst.getSelectedIndex() >= 0)
+			//{
 				int index = clientLst.getSelectedIndex();
-				tempClient = clients.get(index);
+				tempClient = clients.get(index).toString();
 				
 				if(tempClient != selClient)
 				{
 					selClient = tempClient;
-					ProjPull(tempClient);
-					projScrl.updateUI();
+					ProjPull(selClient);
+					//projScrl.updateUI();
+					//projList.updateUI();
+					projList.repaint();
+					JOptionPane.showMessageDialog(null, "Selected " + selClient);
 				}
-			}
+			//}
 		}
 		else if(!lse.getValueIsAdjusting() && lse.getSource() == projList)
+		{
+			int projIndex = projList.getSelectedIndex();
+			tempProj = projects.get(projIndex).toString();
+			if(tempProj != selProj)
+			{
+				selProj = tempProj;
+				JOptionPane.showMessageDialog(null, "Selected " + selProj + " valueIsAdjusting thing.");
+			}
+		}
+		else if(lse.getSource() == projList)
 		{
 			int projIndex = projList.getSelectedIndex();
 			tempProj = projects.get(projIndex);
 			if(tempProj != selProj)
 			{
 				selProj = tempProj;
+				JOptionPane.showMessageDialog(null, "Selected " + selProj + " " + projIndex);
 			}
 		}
 	}
@@ -291,9 +313,11 @@ public class AddNewTask extends JFrame implements ActionListener,ListSelectionLi
 			}
 			else
 			{
-				pst = conn.prepareStatement("SELECT client_id FROM client WHERE client_name=? AND user_id=?");
+				/*pst = conn.prepareStatement("SELECT client_id FROM client WHERE client_name=? AND user_id=?");
 				pst.setString(1, selectCli);
-				pst.setString(2, MainWindow.userID);
+				pst.setString(2, MainWindow.userID);*/
+				pst = conn.prepareStatement("SELECT client_id FROM client WHERE client_name=?");
+				pst.setString(1, selCl);
 			}
 			ResultSet rs = pst.executeQuery();
 			
@@ -324,15 +348,16 @@ public class AddNewTask extends JFrame implements ActionListener,ListSelectionLi
 			projScrl.setLocation(120, 40);
 			frame.add(projScrl);*/
 			//projScrl.setVisible(true);
-			projList.updateUI();
+			//projList.updateUI();
 			//projScrl.updateUI();
 		} 
 		catch (Exception e) 
 		{
-			//JOptionPane.showMessageDialog(null, e + " PROJ");
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e + " PROJ");
+			//e.printStackTrace();
 		}
 	}
+	
 	
 	public static void RefreshLists()
 	{
@@ -348,12 +373,14 @@ public class AddNewTask extends JFrame implements ActionListener,ListSelectionLi
 			conn = DriverManager.getConnection(MysqlConn.conn() + MysqlConn.loginAero());
 			
 			ClientPull();
+			ProjPull("89664425");
 		} 
 		catch (Exception e) 
 		{
 			JOptionPane.showMessageDialog(null, e);
 		}
 	}
+	
 	
 	public static void NullUp()
 	{
