@@ -9,7 +9,7 @@ public class MainWindow extends JFrame implements ActionListener
 	JMenuBar menuBar = new JMenuBar();
 	JMenu menuFile, menuEdit, menuSystem;
 	JMenuItem menuNew, menuSave, menuSaveAs, menuOpen, menuExit; //menuFile, in order top to bottom
-	JMenuItem menuPreview, menuAddTask; //menuEdit, in order top to bottom
+	JMenuItem menuRmvTask, menuAddTask; //menuEdit, in order top to bottom
 	JMenuItem menuLogout; // menuSystem, in order top to bottom
 	
 	static JFrame frame = null;
@@ -59,13 +59,13 @@ public class MainWindow extends JFrame implements ActionListener
 		menuEdit.getAccessibleContext().setAccessibleDescription("Edit Menu");
 		menuBar.add(menuEdit);
 		
-		menuPreview = new JMenuItem("Preview");
-		menuPreview.addActionListener(this);
-		menuEdit.add(menuPreview);
-		
 		menuAddTask = new JMenuItem("Add Task");
 		menuAddTask.addActionListener(this);
 		menuEdit.add(menuAddTask);
+		
+		menuRmvTask = new JMenuItem("Remove Items");
+		menuRmvTask.addActionListener(this);
+		menuEdit.add(menuRmvTask);
 		
 		
 		menuSystem = new JMenu("System");
@@ -102,6 +102,10 @@ public class MainWindow extends JFrame implements ActionListener
 		{
 			//AddNewTask.CreateGUI();
 			SelClient.CreateGUI();
+		}
+		else if(ae.getSource() == menuRmvTask)
+		{
+			RemoveItem.CreateGUI();
 		}
 	}
 }
