@@ -57,7 +57,7 @@ public class RemoveItem extends JFrame implements ActionListener
 		}
 		else if(ae.getSource() == rmvProj)
 		{
-			SelClient.CreateGUI(true);
+			SelClient.CreateGUI(1);
 		}
 		else if(ae.getSource() == rmvTask)
 		{}

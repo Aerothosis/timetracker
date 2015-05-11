@@ -40,7 +40,7 @@ public class SelClient extends JFrame implements ActionListener,ListSelectionLis
 	static PreparedStatement pstTwo = null;
 	static PreparedStatement pstThree = null;
 	
-	static boolean delKey = false; 
+	static int delKey = 0; 
 	
 	SelClient()
 	{
@@ -107,10 +107,10 @@ public class SelClient extends JFrame implements ActionListener,ListSelectionLis
 	
 	public static void main(String[] args) 
 	{
-		CreateGUI(false);
+		CreateGUI(0);
 	}
 
-	public static void CreateGUI(boolean delete)
+	public static void CreateGUI(int delete)
 	{
 		NullUp();
 		delKey = delete;
@@ -129,7 +129,10 @@ public class SelClient extends JFrame implements ActionListener,ListSelectionLis
 		
 		SelClient menuBarTop = new SelClient();
 		frame = new SelClient();
-		frame.setJMenuBar(menuBarTop.createMenuBar());
+		if(delKey == 0)
+		{
+			frame.setJMenuBar(menuBarTop.createMenuBar());
+		}
 		frame.setVisible(true);
 	}
 
@@ -148,16 +151,8 @@ public class SelClient extends JFrame implements ActionListener,ListSelectionLis
 		{
 			if(selClient.length() > 0)
 			{
-				if(delKey)
-				{
-					frame.dispose();
-					SelProj.CreateGUI(selClient, true);
-				}
-				else
-				{
-					frame.dispose();
-					SelProj.CreateGUI(selClient, false);
-				}
+				frame.dispose();
+				SelProj.CreateGUI(selClient, delKey);
 			}
 			else
 			{
@@ -166,16 +161,8 @@ public class SelClient extends JFrame implements ActionListener,ListSelectionLis
 		}
 		else if(ae.getSource() == refresh)
 		{
-			if(delKey)
-			{
-				frame.dispose();
-				SelClient.CreateGUI(true);
-			}
-			else
-			{
-				frame.dispose();
-				SelClient.CreateGUI(false);
-			}
+			frame.dispose();
+			SelClient.CreateGUI(delKey);
 		}
 	}
 	
@@ -187,11 +174,6 @@ public class SelClient extends JFrame implements ActionListener,ListSelectionLis
 		if(tempClient != selClient)
 		{
 			selClient = tempClient;
-			//ProjPull(selClient);
-			//projScrl.updateUI();
-			//projList.updateUI();
-			//projList.repaint();
-			//JOptionPane.showMessageDialog(null, "Selected " + selClient);
 		}
 	}
 	

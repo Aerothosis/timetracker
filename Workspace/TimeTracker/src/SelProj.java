@@ -42,7 +42,7 @@ public class SelProj extends JFrame implements ActionListener,ListSelectionListe
 	static boolean cliSel = false;
 	static String selClient = "";
 	
-	static boolean delKey = false;
+	static int delKey = 0;
 	
 	SelProj()
 	{
@@ -99,10 +99,10 @@ public class SelProj extends JFrame implements ActionListener,ListSelectionListe
 	
 	public static void main(String[] args) 
 	{
-		CreateGUI("First Client", false);
+		CreateGUI("First Client", 0);
 	}
 	
-	public static void CreateGUI(String selCli, boolean delete)
+	public static void CreateGUI(String selCli, int delete)
 	{
 		NullUp();
 		selClient = selCli;
@@ -123,12 +123,11 @@ public class SelProj extends JFrame implements ActionListener,ListSelectionListe
 		SelProj menuBarTop = new SelProj();
 		frame = new SelProj();
 		
-		if(delete)
+		if(delKey == 1)
 		{
 			next.setText("Delete");
 		}
-		
-		else
+		else if(delKey == 0)
 		{
 			frame.setJMenuBar(menuBarTop.createMenuBar());
 		}
@@ -152,7 +151,7 @@ public class SelProj extends JFrame implements ActionListener,ListSelectionListe
 		{
 			if(selProj.length() > 0)
 			{
-				if(delKey)
+				if(delKey == 1)
 				{
 					int confirmOne = JOptionPane.showConfirmDialog(null, "Are you sure you wish to delete " + selProj + "?");
 					
@@ -168,6 +167,10 @@ public class SelProj extends JFrame implements ActionListener,ListSelectionListe
 						}
 					}
 				}
+				else if(delKey == 2)
+				{
+					// TODO Link to TaskSelection
+				}
 				else
 				{
 					frame.dispose();
@@ -181,29 +184,13 @@ public class SelProj extends JFrame implements ActionListener,ListSelectionListe
 		}
 		else if(ae.getSource() == prev)
 		{
-			if(delKey)
-			{
-				frame.dispose();
-				SelClient.CreateGUI(true);
-			}
-			else
-			{
-				frame.dispose();
-				SelClient.CreateGUI(false);
-			}
+			frame.dispose();
+			SelClient.CreateGUI(delKey);
 		}
 		else if(ae.getSource() == refresh)
 		{
-			if(delKey)
-			{
-				frame.dispose();
-				SelProj.CreateGUI(selClient, true);
-			}
-			else
-			{
-				frame.dispose();
-				SelProj.CreateGUI(selClient, false);
-			}
+			frame.dispose();
+			SelProj.CreateGUI(selClient, delKey);
 		}
 	}
 	
@@ -302,12 +289,8 @@ public class SelProj extends JFrame implements ActionListener,ListSelectionListe
 	
 	public static void DeleteStuff(String proj, String selClient)
 	{
-		//clID = clientID;
-		
 		try
-		{	
-			
-				//String tempProj = projects.get(counter);
+		{
 				TaskPull(proj, selClient);
 				
 				try
