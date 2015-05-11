@@ -40,6 +40,8 @@ public class SelClient extends JFrame implements ActionListener,ListSelectionLis
 	static PreparedStatement pstTwo = null;
 	static PreparedStatement pstThree = null;
 	
+	static boolean delKey = false; 
+	
 	SelClient()
 	{
 		this.setSize(400, 300);
@@ -105,12 +107,13 @@ public class SelClient extends JFrame implements ActionListener,ListSelectionLis
 	
 	public static void main(String[] args) 
 	{
-		CreateGUI();
+		CreateGUI(false);
 	}
 
-	public static void CreateGUI()
+	public static void CreateGUI(boolean delete)
 	{
 		NullUp();
+		delKey = delete;
 		
 		try 
 		{
@@ -145,8 +148,16 @@ public class SelClient extends JFrame implements ActionListener,ListSelectionLis
 		{
 			if(selClient.length() > 0)
 			{
-				frame.dispose();
-				SelProj.CreateGUI(selClient);
+				if(delKey)
+				{
+					frame.dispose();
+					SelProj.CreateGUI(selClient, true);
+				}
+				else
+				{
+					frame.dispose();
+					SelProj.CreateGUI(selClient, false);
+				}
 			}
 			else
 			{
@@ -155,8 +166,16 @@ public class SelClient extends JFrame implements ActionListener,ListSelectionLis
 		}
 		else if(ae.getSource() == refresh)
 		{
-			frame.dispose();
-			SelClient.CreateGUI();
+			if(delKey)
+			{
+				frame.dispose();
+				SelClient.CreateGUI(true);
+			}
+			else
+			{
+				frame.dispose();
+				SelClient.CreateGUI(false);
+			}
 		}
 	}
 	

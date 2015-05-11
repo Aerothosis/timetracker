@@ -26,10 +26,11 @@ public class SelProj extends JFrame implements ActionListener,ListSelectionListe
 	static String tempProj = "";
 	static String projID = "";
 	static String clID = "";
+	static ArrayList<String> tasks = new ArrayList<String>();
 	
 	JButton refresh = new JButton("Refresh Lists");
-	JButton prev = new JButton("< Clients");
-	JButton next = new JButton("Next >");
+	static JButton prev = new JButton("< Clients");
+	static JButton next = new JButton("Next >");
 	
 	static JFrame frame = null;
 	
@@ -40,6 +41,8 @@ public class SelProj extends JFrame implements ActionListener,ListSelectionListe
 	
 	static boolean cliSel = false;
 	static String selClient = "";
+	
+	static boolean delKey = false;
 	
 	SelProj()
 	{
@@ -91,33 +94,19 @@ public class SelProj extends JFrame implements ActionListener,ListSelectionListe
 		menuNewProj.addActionListener(this);
 		menuFile.add(menuNewProj);
 		
-		/*menuExit = new JMenuItem("Exit");
-		menuExit.addActionListener(this);
-		menuExit.setMnemonic(KeyEvent.VK_E);
-		menuFile.add(menuExit);
-		
-		
-		menuEdit = new JMenu("Edit");
-		menuEdit.getAccessibleContext().setAccessibleDescription("Edit Menu");
-		menuBar.add(menuEdit);
-		
-		
-		menuSystem = new JMenu("System");
-		menuSystem.getAccessibleContext().setAccessibleDescription("System Menu");
-		menuBar.add(menuSystem);*/
-		
 		return menuBar;
 	}
 	
 	public static void main(String[] args) 
 	{
-		CreateGUI("First Client");
+		CreateGUI("First Client", false);
 	}
 	
-	public static void CreateGUI(String selCli)
+	public static void CreateGUI(String selCli, boolean delete)
 	{
 		NullUp();
 		selClient = selCli;
+		delKey = delete;
 		
 		try 
 		{
@@ -133,10 +122,18 @@ public class SelProj extends JFrame implements ActionListener,ListSelectionListe
 		
 		SelProj menuBarTop = new SelProj();
 		frame = new SelProj();
-		frame.setJMenuBar(menuBarTop.createMenuBar());
-		frame.setVisible(true);
 		
-		//JOptionPane.showMessageDialog(null, selCli);
+		if(delete)
+		{
+			next.setText("Delete");
+		}
+		
+		else
+		{
+			frame.setJMenuBar(menuBarTop.createMenuBar());
+		}
+		
+		frame.setVisible(true);
 	}
 
 	public void valueChanged(ListSelectionEvent lse) 
@@ -146,7 +143,6 @@ public class SelProj extends JFrame implements ActionListener,ListSelectionListe
 		if(tempProj != selProj)
 		{
 			selProj = tempProj;
-			//JOptionPane.showMessageDialog(null, "Selected " + selProj + " valueIsAdjusting thing.");
 		}
 	}
 
@@ -156,8 +152,27 @@ public class SelProj extends JFrame implements ActionListener,ListSelectionListe
 		{
 			if(selProj.length() > 0)
 			{
-				frame.dispose();
-				AddTask.CreateGUI(selProj, selClient);
+				if(delKey)
+				{
+					int confirmOne = JOptionPane.showConfirmDialog(null, "Are you sure you wish to delete " + selProj + "?");
+					
+					if(confirmOne == 0)
+					{
+						int confirmTwo = JOptionPane.showConfirmDialog(null, "This will delete ALL tasks associated with \n"
+								+ "this project. Are you really sure?");
+						
+						if(confirmTwo == 0)
+						{
+							DeleteStuff(selProj, selClient);
+							JOptionPane.showMessageDialog(null, selProj + " was successfully removed!");
+						}
+					}
+				}
+				else
+				{
+					frame.dispose();
+					AddTask.CreateGUI(selProj, selClient);
+				}
 			}
 			else
 			{
@@ -166,13 +181,29 @@ public class SelProj extends JFrame implements ActionListener,ListSelectionListe
 		}
 		else if(ae.getSource() == prev)
 		{
-			frame.dispose();
-			SelClient.CreateGUI();
+			if(delKey)
+			{
+				frame.dispose();
+				SelClient.CreateGUI(true);
+			}
+			else
+			{
+				frame.dispose();
+				SelClient.CreateGUI(false);
+			}
 		}
 		else if(ae.getSource() == refresh)
 		{
-			frame.dispose();
-			SelProj.CreateGUI(selClient);
+			if(delKey)
+			{
+				frame.dispose();
+				SelProj.CreateGUI(selClient, true);
+			}
+			else
+			{
+				frame.dispose();
+				SelProj.CreateGUI(selClient, false);
+			}
 		}
 	}
 	
@@ -232,6 +263,79 @@ public class SelProj extends JFrame implements ActionListener,ListSelectionListe
 		{
 			JOptionPane.showMessageDialog(null, e + " PROJ");
 			//e.printStackTrace();
+		}
+	}
+	
+	public static void TaskPull(String selPj, String selClient)
+	{
+		tasks = null;
+		tasks = new ArrayList<String>();
+		String selectProj = selPj;
+		
+		try
+		{
+			pst = conn.prepareStatement("SELECT project_id FROM project WHERE proj_name=? AND client_id=(SELECT client_id FROM client WHERE client_name=?)");
+			pst.setString(1, selectProj);
+			pst.setString(2, selClient);
+			ResultSet rs = pst.executeQuery();
+			
+			while(rs.next())
+			{
+				projID = rs.getString(1);
+				pstTwo = conn.prepareStatement("SELECT ass_name FROM assignment WHERE proj_id=? AND user_id=?");
+				pstTwo.setString(1,  projID);
+				pstTwo.setString(2, MainWindow.userID);
+				ResultSet rsTwo = pstTwo.executeQuery();
+				
+				while(rsTwo.next())
+				{
+					String taskIn = rsTwo.getString(1);
+					tasks.add(new String(taskIn));
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			JOptionPane.showMessageDialog(null, e + " Task");
+		}
+	}
+	
+	public static void DeleteStuff(String proj, String selClient)
+	{
+		//clID = clientID;
+		
+		try
+		{	
+			
+				//String tempProj = projects.get(counter);
+				TaskPull(proj, selClient);
+				
+				try
+				{
+					for(int count = 0; count < tasks.size(); count++)
+					{
+						
+						String tempTask = tasks.get(count);
+						pstThree = conn.prepareStatement("DELETE FROM assignment WHERE ass_name=? AND proj_id=?");
+						pstThree.setString(1, tempTask);
+						pstThree.setString(2, projID);
+						pstThree.execute();
+					}
+				}
+				catch(Exception e)
+				{
+					JOptionPane.showMessageDialog(null, e + " pst three");
+				}
+				
+				pstTwo = conn.prepareStatement("DELETE FROM project WHERE proj_name=? AND client_id=(SELECT client_id FROM client WHERE client_name=?)");
+				pstTwo.setString(1, proj);
+				pstTwo.setString(2, selClient);
+				pstTwo.execute();
+			
+		}
+		catch(Exception e)
+		{
+			JOptionPane.showMessageDialog(null, e + " delstuffs");
 		}
 	}
 

@@ -96,12 +96,12 @@ public class AddTask extends JFrame implements ActionListener
 		else if(ae.getSource() == cliFrame)
 		{
 			frame.dispose();
-			SelClient.CreateGUI();
+			SelClient.CreateGUI(false);
 		}
 		else if(ae.getSource() == projFrame)
 		{
 			frame.dispose();
-			SelProj.CreateGUI(selClient);
+			SelProj.CreateGUI(selClient, false);
 		}
 	}
 	

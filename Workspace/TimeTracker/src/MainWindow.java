@@ -101,7 +101,7 @@ public class MainWindow extends JFrame implements ActionListener
 		else if(ae.getSource() == menuAddTask)
 		{
 			//AddNewTask.CreateGUI();
-			SelClient.CreateGUI();
+			SelClient.CreateGUI(false);
 		}
 		else if(ae.getSource() == menuRmvTask)
 		{

@@ -15,12 +15,6 @@ import java.util.ArrayList;
 
 public class RemoveClient extends JFrame implements ActionListener,ListSelectionListener
 {
-	JMenuBar menuBar = new JMenuBar();
-	JMenu menuFile, menuEdit, menuSystem;
-	JMenuItem menuNewClient, menuNewProj, menuSaveAs, menuOpen, menuExit; //menuFile, in order top to bottom
-	JMenuItem menuPreview, menuAddTask; //menuEdit, in order top to bottom
-	JMenuItem menuLogout; // menuSystem, in order top to bottom
-	
 	JLabel clientL = new JLabel("Clients");
 	static JList<String> clientLst = null;//new JList<String>();
 	static JScrollPane clientScrl = null;
@@ -51,7 +45,7 @@ public class RemoveClient extends JFrame implements ActionListener,ListSelection
 	{
 		this.setSize(400, 300);
 		this.setLocation(400, 300);
-		this.setTitle("Select Client");
+		this.setTitle("Remove Client");
 		this.setLayout(null);
 		
 		clientL.setSize(100, 30);
@@ -68,46 +62,12 @@ public class RemoveClient extends JFrame implements ActionListener,ListSelection
 		next.setLocation(150, 60);
 		next.addActionListener(this);
 		next.setMnemonic(KeyEvent.VK_D);
-		//menuFile.setMnemonic(KeyEvent.VK_F);
 		this.add(next);
 		
 		refresh.setSize(150, 30);
 		refresh.setLocation(10, 160);
 		refresh.addActionListener(this);
 		this.add(refresh);
-	}
-	
-	public JMenuBar createMenuBar()
-	{
-		menuFile = new JMenu("New");
-		menuFile.getAccessibleContext().setAccessibleDescription("File Menu");
-		menuFile.setMnemonic(KeyEvent.VK_F);
-		menuBar.add(menuFile);
-		
-		menuNewClient = new JMenuItem("Client");
-		menuNewClient.addActionListener(this);
-		menuFile.add(menuNewClient);
-		
-		menuNewProj = new JMenuItem("Project");
-		menuNewProj.addActionListener(this);
-		menuFile.add(menuNewProj);
-		
-		/*menuExit = new JMenuItem("Exit");
-		menuExit.addActionListener(this);
-		menuExit.setMnemonic(KeyEvent.VK_E);
-		menuFile.add(menuExit);
-		
-		
-		menuEdit = new JMenu("Edit");
-		menuEdit.getAccessibleContext().setAccessibleDescription("Edit Menu");
-		menuBar.add(menuEdit);
-		
-		
-		menuSystem = new JMenu("System");
-		menuSystem.getAccessibleContext().setAccessibleDescription("System Menu");
-		menuBar.add(menuSystem);*/
-		
-		return menuBar;
 	}
 	
 	public static void main(String[] args) 
@@ -131,9 +91,7 @@ public class RemoveClient extends JFrame implements ActionListener,ListSelection
 			JOptionPane.showMessageDialog(null, e);
 		}
 		
-		//RemoveClient menuBarTop = new RemoveClient();
 		frame = new RemoveClient();
-		//frame.setJMenuBar(menuBarTop.createMenuBar());
 		frame.setVisible(true);
 	}
 
@@ -160,7 +118,7 @@ public class RemoveClient extends JFrame implements ActionListener,ListSelection
 			}
 			else
 			{
-				//JOptionPane.showMessageDialog(null, "Please select a client first.");
+				JOptionPane.showMessageDialog(null, "Please select a client first.");
 			}
 		}
 		else if(ae.getSource() == refresh)
@@ -178,11 +136,6 @@ public class RemoveClient extends JFrame implements ActionListener,ListSelection
 		if(tempClient != selClient)
 		{
 			selClient = tempClient;
-			//ProjPull(selClient);
-			//projScrl.updateUI();
-			//projList.updateUI();
-			//projList.repaint();
-			//JOptionPane.showMessageDialog(null, "Selected " + selClient);
 		}
 	}
 	
