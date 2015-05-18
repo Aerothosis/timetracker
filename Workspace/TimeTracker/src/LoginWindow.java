@@ -37,7 +37,7 @@ public class LoginWindow extends JFrame implements ActionListener
 	LoginWindow()
 	{
 		this.setSize(280, 180);
-		this.setLocation(400, 200);
+		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setTitle("Login");
 		this.setLayout(null);
