@@ -182,19 +182,23 @@ public class MainWindow extends JFrame implements ActionListener
 		
 		menuNew = new JMenuItem("New Form");
 		menuNew.addActionListener(this);
-		menuFile.add(menuNew);
+		//menuFile.add(menuNew);
 		
 		menuSave = new JMenuItem("Save Form");
 		menuSave.addActionListener(this);
-		menuFile.add(menuSave);
+		//menuFile.add(menuSave);
 		
 		menuSaveAs = new JMenuItem("Save As");
 		menuSaveAs.addActionListener(this);
-		menuFile.add(menuSaveAs);
+		//menuFile.add(menuSaveAs);
 		
 		menuOpen = new JMenuItem("Save PDF");
 		menuOpen.addActionListener(this);
-		menuFile.add(menuOpen);
+		//menuFile.add(menuOpen);
+		
+		menuLogout = new JMenuItem("Log Out");
+		menuLogout.addActionListener(this);
+		menuFile.add(menuLogout);
 		
 		menuExit = new JMenuItem("Exit");
 		menuExit.addActionListener(this);
@@ -213,15 +217,6 @@ public class MainWindow extends JFrame implements ActionListener
 		menuRmvTask = new JMenuItem("Remove Items");
 		menuRmvTask.addActionListener(this);
 		menuEdit.add(menuRmvTask);
-		
-		
-		menuSystem = new JMenu("System");
-		menuSystem.getAccessibleContext().setAccessibleDescription("System Menu");
-		menuBar.add(menuSystem);
-		
-		menuLogout = new JMenuItem("Log Out");
-		menuLogout.addActionListener(this);
-		menuSystem.add(menuLogout);
 		
 		return menuBar;
 	}
@@ -256,6 +251,9 @@ public class MainWindow extends JFrame implements ActionListener
 	public void actionPerformed(ActionEvent ae) {
 		if(ae.getSource() == menuNew){
 			
+		}else if(ae.getSource() == menuLogout){
+			frame.dispose();
+			LoginWindow.CreateGUI();
 		}else if(ae.getSource() == menuAddTask){
 			//AddNewTask.CreateGUI();
 			SelClient.CreateGUI(0);
@@ -269,6 +267,8 @@ public class MainWindow extends JFrame implements ActionListener
 			startTimer.setEnabled(true);
 			endTimer.setEnabled(false);
 			TimerEnd();
+		}else if(ae.getSource() == menuExit){
+			System.exit(0);
 		}
 	}
 	
