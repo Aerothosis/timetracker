@@ -1,14 +1,3 @@
-/AddTask.class
-/RemoveItem.class
-/RemoveClient.class
-/RemoveProject.class
-/RemoveTask.class
-/MainWindow$1.class
-/MainWindow$2.class
-/MainWindow$3.class
-/MainWindow$List.class
-/MainWindow$RunTimeThing.class
-/RunTimeThing.class
-/RegNewUser.class
-/RegNewUser$1.class
-/RegUsrActivate.class
+/EmailVerify$1.class
+/ResetPass.class
+/ResetPassOne.class

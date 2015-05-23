@@ -1,6 +1,8 @@
 
 import javax.swing.*;
+
 import com.mysql.jdbc.exceptions.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
@@ -16,15 +18,15 @@ public class RegNewUser extends JFrame implements ActionListener
 	JTextField passIn = new JTextField();
 	JLabel userNameL = new JLabel("First Name");
 	JTextField userNameIn = new JTextField();
-	JLabel userUICL = new JLabel("Last Name");
-	JTextField userUICIn = new JTextField();
+	JLabel userNameLL = new JLabel("Last Name");
+	JTextField userNameLIn = new JTextField();
 	JLabel emailL = new JLabel("Email");
 	JTextField emailIn = new JTextField();
 	JLabel usrVersion = new JLabel("Version");
 	JTextField usrVersionIn = new JTextField("");
 	JComboBox usrVsnLst;
 	JButton addUser = new JButton("Add User");
-	JButton newForm = new JButton("New Form Window");
+	JButton activateUsr = new JButton("Activate");
 	
 	static JFrame frame = null;
 	
@@ -32,6 +34,7 @@ public class RegNewUser extends JFrame implements ActionListener
 	static String userUICAdmin = "";
 	static String[] usrVsn = {"Select One","Student", "Professional"};
 	static int usrVsnSel;
+	static String newUsrPin;
 	
 	static Connection conn;
 	static PreparedStatement pst;
@@ -40,7 +43,7 @@ public class RegNewUser extends JFrame implements ActionListener
 	
 	RegNewUser()
 	{
-		this.setSize(370, 290);
+		this.setSize(370, 400);
 		//this.setLocation(400, 200);
 		this.setLocationRelativeTo(null);
 		this.setTitle("New User Panel");
@@ -55,24 +58,6 @@ public class RegNewUser extends JFrame implements ActionListener
 		userIn.setSize(100, 30);
 		userIn.setLocation(120, 10);
 		this.add(userIn);
-		
-		usrVersion.setSize(50, 30);
-		usrVersion.setLocation(230, 10);
-		this.add(usrVersion);
-		
-		usrVsnLst = new JComboBox(usrVsn);
-		usrVsnLst.setSize(100, 30);
-		usrVsnLst.setLocation(230, 40);
-		usrVsnLst.addItemListener(
-			new ItemListener(){
-				public void itemStateChanged(ItemEvent event){
-					if(event.getStateChange() == ItemEvent.SELECTED){
-						usrVsnSel = usrVsnLst.getSelectedIndex();
-					}
-				}
-			}
-			);
-		this.add(usrVsnLst);
 		
 		passL.setSize(100, 30);
 		passL.setLocation(10, 50);
@@ -90,13 +75,13 @@ public class RegNewUser extends JFrame implements ActionListener
 		userNameIn.setLocation(120, 90);
 		this.add(userNameIn);
 		
-		userUICL.setSize(100, 30);
-		userUICL.setLocation(10, 130);
-		this.add(userUICL);
+		userNameLL.setSize(100, 30);
+		userNameLL.setLocation(10, 130);
+		this.add(userNameLL);
 		
-		userUICIn.setSize(100, 30);
-		userUICIn.setLocation(120, 130);
-		this.add(userUICIn);
+		userNameLIn.setSize(100, 30);
+		userNameLIn.setLocation(120, 130);
+		this.add(userNameLIn);
 		
 		emailL.setSize(100, 30);
 		emailL.setLocation(10, 170);
@@ -106,10 +91,33 @@ public class RegNewUser extends JFrame implements ActionListener
 		emailIn.setLocation(120, 170);
 		this.add(emailIn);
 		
+		usrVersion.setSize(50, 30);
+		usrVersion.setLocation(10, 210);
+		this.add(usrVersion);
+		
+		usrVsnLst = new JComboBox(usrVsn);
+		usrVsnLst.setSize(100, 30);
+		usrVsnLst.setLocation(120, 210);
+		usrVsnLst.addItemListener(
+			new ItemListener(){
+				public void itemStateChanged(ItemEvent event){
+					if(event.getStateChange() == ItemEvent.SELECTED){
+						usrVsnSel = usrVsnLst.getSelectedIndex();
+					}
+				}
+			}
+			);
+		this.add(usrVsnLst);
+		
 		addUser.setSize(100, 30);
-		addUser.setLocation(50, 210);
+		addUser.setLocation(10, 260);
 		addUser.addActionListener(this);
 		this.add(addUser);
+		
+		activateUsr.setSize(100, 30);
+		activateUsr.setLocation(10, 300);
+		activateUsr.addActionListener(this);
+		this.add(activateUsr);
 		
 		//scroll = new JScrollPane(content);
 		//scroll.setPreferredSize(new Dimension(400, 400));
@@ -130,22 +138,16 @@ public class RegNewUser extends JFrame implements ActionListener
 			JOptionPane.showMessageDialog(null, e + " Connection Error");
 		}
 		
-		
-		
 		frame = new RegNewUser();
 		frame.setVisible(true);
 	}
 
-	public void actionPerformed(ActionEvent ae) 
-	{
-		if(ae.getSource() == addUser)
-		{
+	public void actionPerformed(ActionEvent ae){
+		if(ae.getSource() == addUser){
 			InsertUser();
-		}
-		else if(ae.getSource() == newForm)
-		{
-			frame.setVisible(false);
-			//NewForm.CreateGUI(userAdmin, userUICAdmin);
+			RegUsrActivate.CreateGUI();
+		}else if(ae.getSource() == activateUsr){
+			RegUsrActivate.CreateGUI();
 		}
 		
 	}
@@ -163,31 +165,59 @@ public class RegNewUser extends JFrame implements ActionListener
 				String userIdIn = CmnCode.UserIDRandom(9);
 				String passCon = CmnCode.HashBash(passIn.getText());
 				
-				pst = conn.prepareStatement("INSERT INTO user_login VALUES(?,?,?,?,?,?,?,?)");
+				pst = conn.prepareStatement("INSERT INTO user_login(user_id,username,pass,name_first,name_last,email,account_status,version) VALUES(?,?,?,?,?,?,?,?)");
 				pst.setString(1, userIdIn);
 				pst.setString(2, userIn.getText());
 				pst.setString(3, passCon);
 				pst.setString(4, userNameIn.getText());
-				pst.setString(5, userUICIn.getText());
-				pst.setInt(6, 3);
-				pst.setInt(7, usrVsnSel);
-				pst.setString(8, converted);
+				pst.setString(5, userNameLIn.getText());
+				pst.setString(6, emailIn.getText());// need email input here
+				pst.setInt(7, 0); //account_status - 0 is default and means deactivated
+				pst.setInt(8, usrVsnSel); //version - Student OR Professional
+				//pst.setString(8, converted); //need to take this out, shift to post-email verification
 				pst.execute();
 				
-				pstTwo = conn.prepareStatement("INSERT INTO reg_users VALUES(?,?)");
-				pstTwo.setString(1, converted);
-				pstTwo.setString(2, userIn.getText());
-				pstTwo.execute();
+				//pstTwo = conn.prepareStatement("INSERT INTO reg_users VALUES(?,?)");
+				//pstTwo.setString(1, converted);
+				//pstTwo.setString(2, userIn.getText());
+				//pstTwo.execute();
+				
+				newUsrPin = CmnCode.RandomGen(10);
+				pstThree = conn.prepareStatement("INSERT INTO user_new_reg VALUES(?,?)");
+				pstThree.setString(1, userIdIn);
+				pstThree.setString(2, newUsrPin);
+				pstThree.execute();
+				
+				SendRegMail();
 				
 				JOptionPane.showMessageDialog(null, "Your account has been successfully created!" +
-						"Login: " + userIn.getText() + 
-						"User Level: " + usrVsn[usrVsnSel]);
+						"\n\nLogin: " + userIn.getText() +
+						"\nUser Level: " + usrVsn[usrVsnSel] + 
+						"\n\nPlease verify your email with the pin we sent you.");
 			}
 		}catch(MySQLIntegrityConstraintViolationException m){
 			
 			JOptionPane.showMessageDialog(null, "Duplicate Regnum or Login info. Please try again.");
 		}catch(Exception e){
 			JOptionPane.showMessageDialog(null, e);
+		}
+	}
+	
+	public void SendRegMail(){
+		try{
+		String from = "no-reply@mfurtado.com";
+		String to = emailIn.getText();
+		String subject = "Email Verification - TimeTracker";
+		String message = "Thank you for using TimeTracker!\n\n"
+				+ "Please use the code below to verify your email account\n"
+				+ "and to activate your account with TimeTracker.\n\n"
+				+ newUsrPin + '\n' + '\n' +
+				"Thanks again,"
+				+ "Mike - Lead Dev of TimeTracker";
+		EmailVerify sendMail = new EmailVerify(from, to, subject, message);
+		sendMail.send();
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 }

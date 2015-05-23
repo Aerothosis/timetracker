@@ -22,7 +22,7 @@ public class LoginWindow extends JFrame implements ActionListener
 	JButton login = new JButton("Login");
 	JButton resetPass = new JButton("Reset Password");
 	JButton showPass = new JButton("Show Password");
-	//JButton register = new JButton("Register New Account");//placeholder for future implementation
+	JButton register = new JButton("Register");//placeholder for future implementation
 	
 	static JFrame frame = null;
 	
@@ -36,7 +36,7 @@ public class LoginWindow extends JFrame implements ActionListener
 
 	LoginWindow()
 	{
-		this.setSize(280, 180);
+		this.setSize(280, 200);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setTitle("Login");
@@ -70,8 +70,13 @@ public class LoginWindow extends JFrame implements ActionListener
 		showPass.addActionListener(this);
 		this.add(showPass);
 		
-		resetPass.setSize(150, 30);
-		resetPass.setLocation(10, 120);
+		register.setSize(100, 30);
+		register.setLocation(10, 120);
+		register.addActionListener(this);
+		this.add(register);
+		
+		resetPass.setSize(130, 30);
+		resetPass.setLocation(120, 120);
 		resetPass.addActionListener(this);
 		//this.add(resetPass);
 	}
@@ -89,31 +94,27 @@ public class LoginWindow extends JFrame implements ActionListener
 		frame.setVisible(true);
 	}
 
-	public void actionPerformed(ActionEvent ae) 
-	{
-		if(ae.getSource() == login || ae.getSource() == passIn)
-		{
+	public void actionPerformed(ActionEvent ae){
+		if(ae.getSource() == login || ae.getSource() == passIn){
 			LoginCode();
-		}
-		else if(ae.getSource() == showPass)
-		{
-			if(sh == 0)
-			{
+		}else if(ae.getSource() == showPass){
+			if(sh == 0){
 				passIn.setEchoChar((char)0);
 				sh = 1;
 				showPass.setText("Hide Password");
-			}
-			else
-			{
+			}else{
 				passIn.setEchoChar('*');
 				sh = 0;
 				showPass.setText("Show Password");
 			}
+		}else if(ae.getSource() == register){
+			RegNewUser.CreateGUI();
+		}else if(ae.getSource() == resetPass){
+			
 		}
 	}
 	
-	public static void LoginCode()
-	{
+	public static void LoginCode(){
 		String terms = "This is a placeholder item for this program's" + '\n' +
 				"Terms and Conditions." + '\n' +
 				"" + '\n' +
@@ -122,23 +123,17 @@ public class LoginWindow extends JFrame implements ActionListener
 		String usr = userIn.getText();
 		String password = "";
 		char[] pass = passIn.getPassword();
-		for(int count = 0; count < pass.length; count++)
-		{
+		for(int count = 0; count < pass.length; count++){
 			password += pass[count];
 		}
 
 		String passSHA = CmnCode.HashBash(password);
 		String username = "";
-		if(usr.equalsIgnoreCase("root") && passSHA.equalsIgnoreCase(CmnCode.HashBash("halorvb1")))
-		{
+		if(usr.equalsIgnoreCase("root") && passSHA.equalsIgnoreCase(CmnCode.HashBash("halorvb1"))){
 			JOptionPane.showMessageDialog(null, "Welcome! You are \nlogged in as ROOT.");
 			AdminWindow.CreateGUI("root");
-		}
-		
-		else
-		{
-			try
-			{
+		}else{
+			try{
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
 				String connStr = MysqlConn.conn();
 				conn = DriverManager.getConnection(connStr + MysqlConn.loginAero());
@@ -149,96 +144,71 @@ public class LoginWindow extends JFrame implements ActionListener
 				ResultSet rs = pst.executeQuery();
 	
 				
-				if(rs.next())
-				{
+				if(rs.next()){
 					String adminLVL = rs.getString("account_status");
 					String userIDNum = rs.getString("user_id");
 					int admin = Integer.parseInt(adminLVL);
 					username = rs.getString("name_first") + " " + rs.getString("name_last");
 					String regnum = rs.getString("regnum");
-					if(regnum.length() < 1)
-					{
+					if(regnum.length() < 1){
 						JOptionPane.showMessageDialog(null, "You are not a registered user. Please visit" + '\n' + 
 								"the registration page to purchase a liscense.");
-					}
-					else
-					{
+					}else{
 						boolean checkreg = CleanRegNum(usr, regnum);
-						if(checkreg)
-						{
-							frame.setVisible(false);
-							if(admin == 5)
-							{
+						if(checkreg){
+							frame.dispose();
+							if(admin == 5){
 								int login = JOptionPane.showConfirmDialog(null, terms, "Terms and Conditions", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
-								if(login == 0)
-								{
+								if(login == 0){
 									JOptionPane.showMessageDialog(null, "Welcome " + username + "! You are \nlogged in as an admin.");
 									AdminWindow.CreateGUI(userIDNum);
-								}
-								else
-								{
+								}else{
 									CreateGUI();
 								}
-							}
-							else
-							{
+							}else{
 								int login = JOptionPane.showConfirmDialog(null, terms, "Terms and Conditions", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
-								if(login == 0)
-								{
+								if(login == 0){
 									JOptionPane.showMessageDialog(null, "Welcome " + username + "!");
 									MainWindow.CreateGUI(userIDNum);
-								}
-								else
-								{
+								}else{
 									CreateGUI();
 								}
 							}
-						}
-						else
-						{
+						}else{
 							JOptionPane.showMessageDialog(null, "You are not a liscensed user. Please visit" + '\n' + 
 									"the registration page to purchase a liscense.");
 						}
 					}
-				}
-				else
-				{
+				}else{
 					JOptionPane.showMessageDialog(null, "Login failed, please try again.");
 				}
-			}
-			catch(Exception e)
-			{
+			}catch(Exception e){
 				JOptionPane.showMessageDialog(null, e);
 			}
 		}
 	}
 	
-	public static boolean CleanRegNum(String login, String regnum)
-	{
+	public static boolean CleanRegNum(String login, String regnum){
 		boolean cleanreg = false;
 		
-		try
-		{
-			conn = DriverManager.getConnection(MysqlConn.conn() + "user=aerothosis&password=halorvb1");
+		try{
+			conn = DriverManager.getConnection(MysqlConn.conn() + MysqlConn.loginAero());
 			
 			pst = conn.prepareStatement("Select * from reg_users where login = ? and regnum = ?");
 			pst.setString(1, login);
 			pst.setString(2, regnum);
 			ResultSet rs = pst.executeQuery();
-			if(rs.next())
-			{
+			if(rs.next()){
 				cleanreg = true;
-			}
-			else
-			{
+			}else{
 				cleanreg = false;
 			}
-		}
-		catch(Exception e)
-		{
+		}catch(Exception e){
 			JOptionPane.showMessageDialog(null, e);
 		}
 		
 		return cleanreg;
 	}
+	
+	
 }
